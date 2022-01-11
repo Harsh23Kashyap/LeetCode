@@ -2,10 +2,11 @@ class Solution {
 public:
     bool checkString(string s) 
     {
-        size_t found = s.find("ba");
-        if (found != string::npos)
-            return false;
+        for(int i=s.length()-2;i>=0;i--)
+        {
+            if(s[i]=='b' && s[i+1]=='a')
+                return false;
+        }
         return true;
-        
     }
 };
