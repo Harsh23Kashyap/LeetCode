@@ -9,8 +9,8 @@ public:
         while(n)
         {
             int dig=n&1;
-            cout<<curr<<endl;
-            cout<<dig<<endl;
+            //cout<<curr<<endl;
+            //cout<<dig<<endl;
             if(dig==curr)
                 return false;
             else
