@@ -1,34 +1,45 @@
+#include <bits/stdc++.h>
 class Solution {
 public:
-    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
-        queue<string> q;
-        set<string> st,words;
-        for(string s:wordList)
-            words.insert(s);
-        st.insert(beginWord);
-        q.push(beginWord);
-        int res=0;
-        while(q.size()){
-            int n = q.size();
-            res++;
-            for(int i=0;i<n;i++){
-                string s = q.front();
-                if(s==endWord)
-                    return res;
-                q.pop();
-                string t;
-                for(int i=0;i<s.size();i++){
-                    t=s;
-                    for(int j='a';j<='z';j++){
-                        t[i]=j;
-                        if(words.count(t) and !st.count(t)){
-                            q.push(t);
-                            st.insert(t);
-                        }
-                    }
+    void tryThis(string curr,unordered_map<string,bool>& u, queue<pair<string,int>>& q, int dis)
+    {
+        for(int i=0;i<curr.length();i++)
+        {
+            string temp=curr;
+            for(char ch='a';ch<='z';ch++)
+            {
+                if(temp[i]==ch) continue;
+                temp[i]=ch;
+                if(u.find(temp)!=u.end() and u[temp]==false)
+                {
+                    u[temp]=true;
+                    q.push(make_pair(temp,dis+1));
                 }
             }
         }
+    }
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) 
+    {
+        queue<pair<string,int>> q;
+        unordered_map<string,bool> u;
+        for(string s:wordList)
+            u[s]=false;
+        
+        
+        q.push(make_pair(beginWord,1));
+        while(!q.empty())
+        {
+            auto it=q.front();
+            string curr=it.first;
+            int dis=it.second;
+            //cout<<curr<<endl;
+            q.pop();
+            if(curr==endWord)
+                return dis;
+            
+            tryThis(curr,u,q,dis);
+        }
         return 0;
+        
     }
 };
