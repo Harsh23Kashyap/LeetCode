@@ -18,16 +18,16 @@ void display(struct Node *head);
 
 struct Node* reverseList(struct Node *head)
     {
-       struct Node* prev=NULL;
-       struct Node* curr=head;
-       while(curr!=NULL)
-       {
-           struct Node* fwd=curr->next;
-           curr->next=prev;
-           prev=curr;
-           curr=fwd;
-       }
-       return prev;
+       if(head==NULL || head->next==NULL)
+       return head;
+       
+       struct Node* shead=reverseList(head->next);
+       
+       struct Node* temp=head->next;
+       
+       head->next=NULL;
+       temp->next=head;
+       return shead;
     }
 
 // { Driver Code Starts.
