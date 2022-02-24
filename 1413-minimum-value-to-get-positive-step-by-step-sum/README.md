@@ -1,4 +1,4 @@
-<h2><a href="https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum/">1413. Minimum Value to Get Positive Step by Step Sum</a></h2><h3>Easy</h3><hr><div><p>Given an array of integers&nbsp;<code>nums</code>, you start with an initial <strong>positive</strong> value <em>startValue</em><em>.</em></p>
+<h2><a href="https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum/solution/">1413. Minimum Value to Get Positive Step by Step Sum</a></h2><h3>Easy</h3><hr><div><p>Given an array of integers&nbsp;<code>nums</code>, you start with an initial <strong>positive</strong> value <em>startValue</em><em>.</em></p>
 
 <p>In each iteration, you calculate the step by step sum of <em>startValue</em>&nbsp;plus&nbsp;elements in <code>nums</code>&nbsp;(from left to right).</p>
 
