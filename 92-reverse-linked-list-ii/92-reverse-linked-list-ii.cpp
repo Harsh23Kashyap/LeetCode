@@ -42,16 +42,16 @@ public:
         
         for(int i=1;i<left-1;i++)
             start=start->next;
-         cout<<start->val<<endl;
+        // cout<<start->val<<endl;
         
         for(int i=1;i<right;i++)
             end=end->next;
-         cout<<end->val<<endl;
+         //cout<<end->val<<endl;
         if(left==1)
             head=reverse(start,end);
         else
         {
-            cout<<"runs"<<endl;
+            //cout<<"runs"<<endl;
             start->next=reverse(start->next,end);
         }
         return head;
