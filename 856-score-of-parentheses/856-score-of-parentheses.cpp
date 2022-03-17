@@ -2,25 +2,36 @@ class Solution {
 public:
     int scoreOfParentheses(string s) 
     {
-        int total=0;
-        int bal=0;
-        stack<char> st;
+        s='('+s+')';
+        stack<int> st;
         for(int i=0;i<s.length();i++)
         {
             if(s[i]=='(')
             {
-                bal++;
+                st.push(-1);
             }
             else
             {
-                bal--;
-                if(s[i-1]=='(')
-                    total+=(1<<bal);
-                    
-                
+                if(st.top()==-1)
+                {
+                    st.pop();
+                    st.push(1);
+                }
+                else
+                {
+                    int score=0;
+                    while(st.top()!=-1)
+                    {
+                        score+=st.top();
+                        st.pop();
+                    }
+                    st.pop();
+                    st.push(2*score);
+                }
             }
         }
-        return total;
+        //cout<<"Runs"<<endl;
+        return st.top()/2;
         
     }
 };
