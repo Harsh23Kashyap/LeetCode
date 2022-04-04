@@ -1,29 +1,37 @@
 class Solution {
 public:
-    static bool cmp(vector<int>& a,vector<int>& b)
+    static bool cmp(const pair<int,int> a, const pair<int,int> b)
     {
-        return a[1]<=b[1];
+        if(a.second<b.second)
+            return true;
+        else if(a.second==b.second)
+        {
+            if(a.first<b.first)
+                return true;
+        }
+        return false;
+        
     }
     bool carPooling(vector<vector<int>>& trips, int capacity) 
     {
-        sort(trips.begin(),trips.end());
-        
-        vector<int> sized(1001,0);
+        vector<pair<int,int>> el;
         for(int i=0;i<trips.size();i++)
         {
-            int start=trips[i][1];
-            int end=trips[i][2];
-            sized[start]+=trips[i][0];
-            sized[end]-=trips[i][0];
+            el.push_back(make_pair(trips[i][0],trips[i][1]));
+            el.push_back(make_pair(-trips[i][0],trips[i][2]));
         }
-        vector<int> prefix;
-        int sum=0;
-        for(int i=0;i<sized.size();i++)
+        
+        sort(el.begin(),el.end(),cmp);
+        int total=0;
+        for(auto i:el)
         {
-            sum+=sized[i];
-            prefix.push_back(sum);
+            total+=i.first;
+            if(total>capacity)
+                return false;
+            //cout<<i.first<< " "<<i.second<<endl;
         }
-        return *max_element(prefix.begin(),prefix.end())<=capacity;
+        return true;
+            
         
     }
 };
