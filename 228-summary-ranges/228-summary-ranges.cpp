@@ -1,38 +1,37 @@
 class Solution {
 public:
-    vector<string> summaryRanges(vector<int>& arr) {
-        int n = arr.size(); // extracting size of the array
-        vector<string> ans; // declaring answer array to store our answer
-        
-        string temp = ""; // temproray string that stores all possible answer
-        
-        for(int i = 0; i < n; i++) // start traversing from the array
+    vector<string> summaryRanges(vector<int>& nums) 
+    {
+        vector<string> ans;
+        if(nums.size()==0)
+            return ans;
+        else if(nums.size()==1)
         {
-            int j = i; // declare anthor pointer that will move
-            
-            // run that pointer until our range is not break
-            while(j + 1 < n && arr[j + 1] == arr[j] + 1)
-            {
-                j++;
-            }
-            
-            // if j > i, that means we got our range more than one element
-            if(j > i)
-            {
-                temp += to_string(arr[i]); // first store starting point
-                temp += "->"; // then store arrow, as question wants it
-                temp += to_string(arr[j]); // and lastly store the end point
-            }
-            else // we got only one element as range
-            {
-                temp += to_string(arr[i]); // then store that element in temp
-            }
-            
-            ans.push_back(temp); // push one possible answer string to our answer
-            temp = ""; // again reintiliaze temp for new possible answers
-            i = j; // and move i to j for a fresh start
+            ans.push_back(to_string(nums[0]));
+            return ans;
         }
+        int start=nums[0],end=nums[0];
+        for(int i=1;i<nums.size();i++)
+        {
+            if(nums[i]!=end+1)
+            {
+                if(start==end)
+                     ans.push_back(to_string(start));
+                else
+                    ans.push_back(to_string(start)+"->"+to_string(end));
+                start=nums[i];
+                end=nums[i];
+            }
+            else
+            {
+                end=nums[i];
+            }
+        }
+        if(start==end)
+                     ans.push_back(to_string(start));
+        else
+                    ans.push_back(to_string(start)+"->"+to_string(end));
+        return ans;
         
-        return ans; // and at last finally return the answer array
     }
 };
