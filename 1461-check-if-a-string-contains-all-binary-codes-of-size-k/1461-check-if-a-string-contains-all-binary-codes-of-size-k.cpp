@@ -2,13 +2,14 @@ class Solution {
 public:
     bool hasAllCodes(string s, int k) 
     {
-        if(k>s.length()) return false;
-        int total=pow(2,k);
-        set<string> se;
-        for(int i=0;i<s.length()-k+1;i++)
+        if(s.size()<k)
+            return false;
+        long long high=pow(2,k);
+        set<string> sl;
+        for(int i=0;i<s.size()-k+1;i++)
         {
-            se.insert(s.substr(i,k));
-            if(se.size()==total)
+            sl.insert(s.substr(i,k));
+            if (sl.size()==high)
                 return true;
         }
         return false;
