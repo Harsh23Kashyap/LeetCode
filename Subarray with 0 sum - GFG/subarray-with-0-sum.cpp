@@ -26,9 +26,7 @@ class Solution{
             else
                 m[i]=1;
         }
-        if(m.find(0)!=m.end())
-        return true;
-        return false;
+        return m.find(0)!=m.end();
     }
 };
 
