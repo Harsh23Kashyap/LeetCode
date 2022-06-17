@@ -15,23 +15,20 @@ class Solution{
         int maxi=0;
         unordered_map<int,int> u;
         
-        vector<int> prefix(n,0);
-        prefix[0]=A[0];
-        for(int i=1;i<n;i++)
-            prefix[i]=prefix[i-1]+A[i];
-            
+        int csum=0;
         
         for(int i=0;i<n;i++)
         {
-            if(prefix[i]==0)
+            csum+=A[i];
+            if(csum==0)
                 maxi=max(i+1,maxi);
-            if(u.find(prefix[i])!=u.end())
+            if(u.find(csum)!=u.end())
             {
-                maxi=max(maxi,i-u[prefix[i]]);
+                maxi=max(maxi,i-u[csum]);
             }
             else
             {
-                u[prefix[i]]=i;
+                u[csum]=i;
             }
             
         }
