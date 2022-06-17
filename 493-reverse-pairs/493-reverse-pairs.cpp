@@ -1,47 +1,65 @@
 class Solution {
 public:
-    int c;
-    void inverse(vector<int>& nums, int start, int end, int mid)
+    
+    int inverse(vector<int>& nums, int s, int e, int m)
     {
-        int l = start, r = mid + 1;
-        while(l <= mid and r <= end)
+        int c=0;
+        vector<int> temp;
+        int i=s,j=m+1;
+        while(i<=m and j<=e)
         {
-            if((long)nums[l] > (long) 2 * nums[r])
+            long long a=nums[i];
+            long long b= nums[j];
+            b*=2;
+            if(a>b)
             {
-                c += (mid - l + 1);
-                r++;
+                //cout<<nums[i]<<"at "<<i<<" , and "<<nums[j]<<" at "<<j<<endl;
+                c+=(m-i+1);
+                j++;
             }
             else
-                l++;
+                i++;
         }
-       // worst case might be nlog(n) 
-        sort(nums.begin() + start, nums.begin() + end + 1);
-        return;
+        i=s,j=m+1;
+        while(i<=m and j<=e)
+        {
+            if(nums[i]>nums[j])
+                temp.push_back(nums[j++]);
+            else
+                temp.push_back(nums[i++]);
+        }
+        
+        while(i<=m)
+            temp.push_back(nums[i++]);
+        while(j<=e)
+            temp.push_back(nums[j++]);
+        
+        int k=0;
+        for(int i=s;i<=e;i++)
+            nums[i]=temp[k++];
+            
+        //cout<<c<<endl;
+        return c;
         
     }
     
-    void merge(vector<int>& nums, int s, int e)
+    int merge(vector<int>& nums, int s, int e)
     {
-        
         if(s>=e)
-            return;
-        int m=(e+s)/2;
-        merge(nums,s,m);
-        merge(nums,m+1,e);
-        inverse(nums,s,e,m);
-        return;
+            return 0;
+        int m=s+(e-s)/2;
+        int x= merge(nums,s,m);
+        int y=merge(nums,m+1,e);
+        int z=inverse(nums,s,e,m);
+        
+        return x+y+z;
     }
               
               
               
     int reversePairs(vector<int>& nums) 
     {
-        if(!nums.size())
-            return 0;
-        c=0;
-        cout<<nums.size();
-        merge(nums,0,nums.size()-1);
-        return c;
+        return merge(nums,0,nums.size()-1);
         
     }
 };
