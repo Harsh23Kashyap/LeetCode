@@ -2,30 +2,28 @@ class Solution {
 public:
     string getPermutation(int n, int k) 
     {
+        int fact=1;
         string ans="";
-        vector<int> factorial(10,1);
-        for(int i=2;i<=9;i++)
-        {
-            factorial[i]=factorial[i-1]*i;
-        }
-        //cout<<"runs"<<endl;
-        vector<int> digits(n,0);
+        vector<int> no;
         for(int i=1;i<=n;i++)
-            digits[i-1]=i;
-        //cout<<"runs"<<endl;
-        while(n>0)
         {
-            int index=k/factorial[n-1];
-            if(k%factorial[n-1]==0)
-                index--;
-            
-            ans+=to_string(digits[index]);
-            k-=(factorial[n-1]*index);
-            n--;
-            digits.erase(digits.begin()+index);
-            
+            fact=fact*i;
+            no.push_back(i);
         }
-        return ans ;
+        fact/=n;
+        k--;
+        while(true)
+        {
+            ans+=to_string(no[k/fact]);
+            no.erase(no.begin()+(k/fact));
+            if(no.size()==0)
+                break;
+            k=k%fact;
+            fact=fact/no.size();      
+                
+
+        }
+        return ans;
+        
     }
-    
 };
