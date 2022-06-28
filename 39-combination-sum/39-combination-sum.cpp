@@ -1,30 +1,30 @@
 class Solution {
 public:
-    void recursive(vector<vector<int>>& ans, vector<int>& temp,vector<int>& candidates, int target,int i )
+    void check(vector<int>& candidates,vector<vector<int>> &ans,vector<int> &temp,int target, int i)
     {
-        if(target<0)
+        if (target<0 or i==candidates.size())
             return;
         if(target==0)
         {
             ans.push_back(temp);
             return;
         }
-        if(i==candidates.size())
-            return;
         
-        //include
         temp.push_back(candidates[i]);
-        recursive(ans,temp,candidates,target-candidates[i],i);
-        //exclude
-        temp.pop_back();
-        recursive(ans,temp,candidates,target,i+1);
+            check(candidates,ans,temp,target-candidates[i],i);
+            //exclude
+            temp.pop_back();
+            check(candidates,ans,temp,target,i+1);
+            
         
     }
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) 
     {
+        sort(candidates.begin(),candidates.end());
         vector<vector<int>> ans;
         vector<int> temp;
-        recursive(ans, temp,candidates,target,0);
+        
+        check(candidates,ans,temp,target,0);
         return ans;
         
     }
