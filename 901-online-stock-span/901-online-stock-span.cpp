@@ -1,45 +1,44 @@
 class StockSpanner {
 public:
     stack<int> s;
-    vector<int> price;
+    vector<int> ans;
     int days=0;
-    StockSpanner() 
-    {
+    StockSpanner() {
         
     }
     
-    int next(int p) 
+    int next(int price) 
     {
-        int x=0;
-        if(price.size()==0)
+        //cout<<price<<endl;
+        
+        if(ans.size()==0)
         {
-            price.push_back(p);
+            ans.push_back(price);
             s.push(days);
-            
             days++;
             return days;
         }
-        else
+        while(!s.empty() and ans[s.top()]<=price)
         {
-            //cout<<p<<" - ";
-            price.push_back(p);
-            while(!s.empty() and price[s.top()]<=p)
-            {
-                s.pop();
-            }
-            //cout<<s.size()<<endl;
-            //cout<<price[s.top()]<<endl;
-            if(s.empty())
-                x= days+1;
-            else
-                x=days-s.top();
-            
-            s.push(days);
-            days++;
+            s.pop();
             
         }
-        return x;
+        ans.push_back(price);
+        int x;
+        if(s.empty())
+        {
+            
+            x= days+1;
+        }
+        else
+             x=days-s.top();
+            
+        //cout<<price<<" - "<<s.top()<<" "<<days<<endl;
         
+        s.push(days);
+        days++;
+        
+        return x;
         
     }
 };
