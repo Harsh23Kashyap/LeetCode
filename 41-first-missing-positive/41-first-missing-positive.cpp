@@ -17,7 +17,7 @@ public:
                 if(nums[val-1]>0)
                     nums[val-1]=-1*(nums[val-1]);
                 if(nums[val-1]==0)
-                    nums[val-1]=-1*(nums.size()+1);
+                    nums[val-1]=-1*(nums.size()+110);
                     
             }
         }
