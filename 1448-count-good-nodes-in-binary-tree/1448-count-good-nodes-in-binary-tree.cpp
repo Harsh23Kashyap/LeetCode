@@ -11,21 +11,22 @@
  */
 class Solution {
 public:
-    void good(TreeNode* root, int &ans, int maxi)
+    int ans=0;
+    void order(TreeNode* root, int maxi)
     {
         if(root==NULL)
             return;
-        
-        
         if(root->val>=maxi)
+        {
+            //cout<<root->val<<" "<<maxi<<endl;
             ans++;
-        good(root->left,ans,max(maxi,root->val));
-         good(root->right,ans,max(maxi,root->val));
+        }
+        order(root->left,max(maxi,root->val));
+        order(root->right,max(maxi,root->val));
     }
     int goodNodes(TreeNode* root) 
     {
-        int ans=0;
-         good(root,ans,INT_MIN);
+        order(root,INT_MIN);
         return ans;
     }
 };
