@@ -16,8 +16,7 @@ public:
     }
     int maximumRows(vector<vector<int>>& mat, int cols) 
     {
-        int n=mat.size();
-        int m=mat[0].size();
+        int n=mat.size(),m=mat[0].size();
         int possible=power(2,m)-1;
         vector<vector<int>> vp(possible+1,vector<int>(m,0));
         int i=0;
@@ -30,9 +29,9 @@ public:
                 if((i&(1<<j))>=1)
                 {
                     vp[i][j]=1;
-                }
+                }
                 j++;
-            }
+            }
             i++;
         }
         int maxi=INT_MIN;
