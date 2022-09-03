@@ -40,14 +40,7 @@ public:
         }
         int maxi=INT_MIN;
         i=0;
-        
-        
-        
-        
-        
-        
-        
-                    while(i<=possible)
+        while(i<=possible)
                     {
                         int cnt=0;
                         set<int> st;
