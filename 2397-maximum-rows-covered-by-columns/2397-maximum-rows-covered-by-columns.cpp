@@ -1,79 +1,69 @@
 class Solution {
 public:
-    int power(int x, int y)
+    void generate(int i,int k,vector<int> &temp,vector<vector<int>> &com,int lim)
     {
-        int result = 1;
-        while (y > 0) 
+        if(temp.size()==k)
         {
-          if(y&1==1) // y is odd
-          {
-            result=result*x;
-          }
-          x=x*x;
-          y=y>>1; // y=y/2;
+            com.push_back(temp);
+            return;
         }
-        return result;
+        if(i==lim)
+            return;
+        if((lim-i)<k-temp.size())
+            return;
+        
+        //include
+        temp.push_back(i);
+        generate(i+1,k,temp,com,lim);
+        //exclude
+        temp.pop_back();
+        generate(i+1,k,temp,com,lim);
+        return;
     }
     int maximumRows(vector<vector<int>>& mat, int cols) 
     {
         int n=mat.size(),m=mat[0].size();
-        int possible=power(2,m)-1;
-        vector<vector<int>> vp(possible+1,vector<int>(m,0));
-        int i=0;
-        while(i<=possible)
+        //int possible=power(2,m)-1;
+        vector<vector<int>> comb;
+        int maxi=0;
+        vector<int> temp;
+        generate(0,m-cols,temp,comb,m);
+//         for(int i=0;i<comb.size();i++)
+//         {
+//             for(int j=0;j<comb[i].size();j++)
+//                 cout<<comb[i][j]<<" ";
+//             cout<<endl;
+            
+//         }
+        for(int i=0;i<comb.size();i++)
         {
-            int el=i;
-            int j=0;
-            while(j<m)
+            int ans=0;
+            unordered_set<int> st;
+            for(int j=0;j<comb[i].size();j++)
             {
-                if((i&(1<<j))>=1)
+                
+               int col=comb[i][j];
+               // cout<<col<<" ";
+                for(int k=0;k<n;k++)
                 {
-                    vp[i][j]=1;
-                }
-                j++;
-            }
-            i++;
-        }
-        int maxi=INT_MIN;
-        i=0;
-        while(i<=possible)
-        {
-            int cnt=0;
-            set<int> st;
-            int gnt=0;
-            int j=0;
-            while(j<m)
-            {
-                if(vp[i][j]==1)
-                {
-                    st.insert(j);
-                    cnt++;
-                }
-                j++;
-             }
-            if(cnt==cols)
-            {
-                for(int i=0;i<n;i++)
-                {
-                    int check=0; 
-                    for(int j=0;j<m;j++)
+                    if(mat[k][col]==1)
                     {
-                        if(st.count(j)==0)
-                        {
-                            if(mat[i][j]==1) 
-                                check=1;
-                        }
+                        st.insert(k);
+                        //break;
                     }
-                    if(check==0)
-                        gnt++; 
                 }
-            } 
-            maxi=max(maxi,gnt);
-            i++;
+                    
+            }
+            
+            
+            
+            ans=n-st.size();
+            // cout<<endl;
+            // cout<<"Ans-"<<ans<<endl;
+            maxi=max(ans,maxi);
+            
         }
-        if(maxi==INT_MIN)
-            return 0;
+       
         return maxi;
-        
     }
 };
