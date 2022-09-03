@@ -20,7 +20,8 @@ public:
         int n=mat.size();
         int m=mat[0].size();
         
-        int possible=power(2,m)-1;
+        int possible=power(2,m);
+        possible--;
         vector<vector<int>> vp(possible+1,vector<int>(m,0));
 
         int i=0;
@@ -30,7 +31,8 @@ public:
             int j=0;
             while(j<m)
             {
-                if((i&(1<<j))>=1)
+                int c=(i&(1<<j));
+                if(c>=1)
                 {
                     vp[i][j]=1;
                 }
