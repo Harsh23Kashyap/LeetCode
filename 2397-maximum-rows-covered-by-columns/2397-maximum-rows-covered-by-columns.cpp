@@ -17,14 +17,14 @@ public:
     int maximumRows(vector<vector<int>>& mat, int cols) 
     {
         
-        int n=mat.size();
-        int m=mat[0].size();
+         int n=mat.size();
+         int m=mat[0].size();
         
         int possible=power(2,m)-1;
-        vector<vector<int>> vp(possible+1,vector<int>(m,0));
+          vector<vector<int>> vp(possible+1,vector<int>(m,0));
 
         int i=0;
-        while(i<=possible)
+           while(i<=possible)
         {
              int el=i;
             int j=0;
