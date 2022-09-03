@@ -47,46 +47,46 @@ public:
         
         
         
-        while(i<=possible)
-        {
-            int cnt=0;
-            set<int> st;
-            int gnt=0;
-            int j=0;
-            while(j<m)
-            {
-                 if(vp[i][j]==1)
-                 {
-                     st.insert(j);
-                     cnt++;
-                 }
-                j++;
-             }
-            if(cnt==cols)
-            {
-
-                for(int i=0;i<n;i++)
-                {
-                   int check=0; 
-                    for(int j=0;j<m;j++)
+                    while(i<=possible)
                     {
-                        if(st.count(j)==0)
+                        int cnt=0;
+                        set<int> st;
+                        int gnt=0;
+                        int j=0;
+                        while(j<m)
                         {
-                            if(mat[i][j]==1) 
-                                check=1;
-                        }
-                    }
-                   if(check==0)
-                       gnt++; 
-                }
-                
-            } 
-          maxi=max(maxi,gnt);
-            i++;
-        }
-        if(maxi==INT_MIN)
-            return 0;
-        return maxi;
+                             if(vp[i][j]==1)
+                             {
+                                 st.insert(j);
+                                 cnt++;
+                             }
+                            j++;
+                         }
+                        if(cnt==cols)
+                        {
+
+                            for(int i=0;i<n;i++)
+                            {
+                               int check=0; 
+                                for(int j=0;j<m;j++)
+                                {
+                                    if(st.count(j)==0)
+                                    {
+                                        if(mat[i][j]==1) 
+                                            check=1;
+                                    }
+                                }
+                               if(check==0)
+                                   gnt++; 
+                            }
+
+                        } 
+                      maxi=max(maxi,gnt);
+                        i++;
+                    }
+                    if(maxi==INT_MIN)
+                        return 0;
+                    return maxi;
         
     }
 };
