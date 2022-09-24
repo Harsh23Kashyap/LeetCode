@@ -34,18 +34,12 @@ public:
             if(del<=maxh.top())
             {
                 left--;
-                if(maxh.top()==del)
-                    maxh.pop();
-                else
-                    u[del]++;
+                u[del]++;
             }
             else
             {
                 left++;
-                if(minh.top()==del)
-                    minh.pop();
-                else
-                    u[del]++;
+                u[del]++;
             }
             
             if(!maxh.empty() and add<=maxh.top())
