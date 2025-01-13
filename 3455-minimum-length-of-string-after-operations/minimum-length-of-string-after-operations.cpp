@@ -8,11 +8,10 @@ public:
         int c=0;
         for(auto it:u)
         {
-            while(it.second>2)
-            {
-                it.second-=2;
-            }
-            c+=it.second;
+            if(it.second%2==0)
+                c+=2;
+            else
+                c+=1;
         }
         return c;
     }
