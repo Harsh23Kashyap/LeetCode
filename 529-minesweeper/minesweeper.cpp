@@ -35,7 +35,7 @@ public:
                         int nx=td[0]+it.first,ny=td[1]+it.second;
                         if(nx>=0 and ny>=0 and nx<board.size() and ny<board[0].size() and u.find(nx*board[0].size()+ny)==u.end()){
                             u.insert(nx*board[0].size()+ny);
-                            board[nx][ny]='B';
+                            // board[nx][ny]='B';
                             q.push({nx,ny});
                         }
                     }
