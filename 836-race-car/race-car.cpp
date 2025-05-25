@@ -10,7 +10,7 @@ struct pair_hash {
         if(target==0)
             return 0;
         queue<pair<long long,long long>> q;
-       unordered_set<std::pair<int, int>, pair_hash> u;
+       set<pair<int, int>> u;
         q.push({0,1});
         u.insert({0,1});
         int c=0;
@@ -28,7 +28,7 @@ struct pair_hash {
                     return c+1;
                 
                 // s=to_string(nx)+" . "+to_string(ns);
-                if(u.find({nx,ns})==u.end()){
+                if(u.find({nx,ns})==u.end() and nx<=2*target){
                     q.push({nx,ns});
                     u.insert({nx,ns});
                 }
@@ -39,7 +39,7 @@ struct pair_hash {
                 else
                     ns=1;
                 // s=to_string(it.first)+" . "+to_string(ns);
-                if(u.find({it.first,ns})==u.end()){
+                if(u.find({it.first,ns})==u.end() and it.first<=2*target ){
                     q.push({it.first,ns});
                     u.insert({it.first,ns});
                 }
