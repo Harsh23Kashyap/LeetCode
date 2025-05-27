@@ -1,67 +1,62 @@
 class Solution {
-public:
-vector<string> ans;
-    struct trie{
-        char ch;
-        bool ends;
-        trie *child[26];
-        trie(char c){
-            this->ch=c;
-            for(int i=0;i<26;i++){
+    vector<string> ans;//Store all valid sentences
+    class trienode{
+        public:
+        char c;
+        int we;
+        trienode *child[26];
+        trienode(char c){
+            we = 0;
+            this->c = c;
+            for(int i=0;i<26;++i)
                 child[i]=NULL;
-            }
-            ends=false;
         }
     };
-    void insert(string word, trie *root){
-        trie *curr=root;
-        for(int i=0;i<word.size();i++){
-            char cc=word[i];
-            int pos=cc-'a';
-            if(curr->child[pos]!=NULL){
-                curr=curr->child[pos];
-            }
-            else{
-                curr->child[pos]=new trie(cc);
-                curr=curr->child[pos];
-            }
+    trienode *root;//root of TRIE
+    void insertInTrie(const string &word){
+        trienode *curr = root;
+        int idx;
+        for(int i=0;i<word.size();++i){
+            idx = word[i]-'a';
+            if(!curr->child[idx])
+                curr->child[idx] = new trienode(char(97+idx));
+            curr = curr->child[idx];
         }
-        curr->ends=true;
+        curr->we += 1;
     }
-    bool search(string word,trie *root){
-        trie *curr=root;
-        for(int i=0;i<word.size();i++){
-            char cc=word[i];
-            int pos=cc-'a';
-            if(curr->child[pos]==NULL){
+    bool searchInTrie(string s){
+        trienode *curr = root;
+        int idx;
+        for(int i=0;i<s.size();++i){
+            idx = s[i]-'a';
+            if(!curr->child[idx])
                 return false;
-            }
-                curr=curr->child[pos];
+            curr = curr->child[idx];
         }
-        return curr->ends;
+        return curr->we>0;
     }
-    void solve(int i, string s, unordered_set<string> ut, string cs){
-        if(i==s.size())
-        {
-            ans.push_back(cs.substr(1));
+    
+    void solve(const string &s,string st,int pos){
+        if(pos==s.size()){
+            ans.push_back(st);
             return;
         }
-
-        for(int j=i+1;j<=s.size();j++){
-            string sub=s.substr(i,j-i);
-            if(ut.find(sub)!=ut.end()){
-                solve(j,s,ut,cs+" "+sub);
-            }
+        st += " ";
+        for(int i=pos;i<s.size();++i){
+            if(searchInTrie(s.substr(pos,i+1-pos)))
+                solve(s,st+s.substr(pos,i+1-pos),i+1);
         }
     }
+public:
     vector<string> wordBreak(string s, vector<string>& wordDict) {
-        // trie *root= new trie('/');
-        unordered_set<string> uu(wordDict.begin(),wordDict.end());
-        // for(auto it:wordDict){
-        //     insert(it,root);
-        // }
-        solve(0,s,uu,"");
-        return ans;
+        root = new trienode('/');
+        for(auto word: wordDict)
+            insertInTrie(word);
         
+        for(int i=0;i<s.size();++i){
+            if(searchInTrie(s.substr(0,i+1)))
+                solve(s,s.substr(0,i+1),i+1);
+        }
+        return ans;
     }
 };
