@@ -26,17 +26,16 @@ public:
                 //     q.push(it);
                 // }
 
-                // if(taken.find(it)!=taken.end())
-                //     continue;
+                if(taken.find(it)!=taken.end())
+                    continue;
                 taken.insert(it);
                 c+=candies[it];
                 // cout<<c<<endl;
                 for(auto tck:keys[it]){
                     kf.insert(tck);
-                    status[tck] = 1; // Mark the box as open
+                    status[tck] = 1; 
                     if(lefttoPlay.find(tck) != lefttoPlay.end() && taken.find(tck) == taken.end()){
-                        q.push(tck); // Now that we have the key, we can process it
-                        lefttoPlay.erase(tck); // Remove from leftToPlay since it's now in queue
+                        q.push(tck); 
                     }
                 }
 
@@ -55,8 +54,7 @@ public:
                     
         for (auto it: lefttoPlay) {
             if (status[it] == 1 && taken.find(it) == taken.end()) {
-                q.push(it); // Process it since we now have the key
-                it = lefttoPlay.erase(it); // Erase while iterating
+                q.push(it); 
             } 
         }
 
