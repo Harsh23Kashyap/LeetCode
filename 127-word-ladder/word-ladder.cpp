@@ -1,31 +1,38 @@
 class Solution {
 public:
-    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
-        unordered_set<string> dict(wordList.begin(), wordList.end());
-        if (dict.find(endWord) == dict.end())
-            return 0;
+    int ladderLength(string beginWord, string endWord, vector<string>& wl) {
+        unordered_set<string> uu(wl.begin(),wl.end());
 
-        queue<pair<string, int>> q;
-        q.push({beginWord, 1});
-        unordered_set<string> visited;
-        visited.insert(beginWord);
 
-        while (!q.empty()) {
-            auto [word, level] = q.front(); q.pop();
-            if (word == endWord) return level;
+        unordered_set<string> vis;
 
-            for (int i = 0; i < word.size(); ++i) {
-                string temp = word;
-                for (char c = 'a'; c <= 'z'; ++c) {
-                    temp[i] = c;
-                    if (dict.count(temp) && !visited.count(temp)) {
-                        q.push({temp, level + 1});
-                        visited.insert(temp);
+        queue<string> q;
+
+        q.push(beginWord);
+        int curr=1;
+        while(!q.empty()){
+            int sz=q.size();
+            while(sz--){
+                auto it=q.front();
+                q.pop();
+                for(int i=0;i<it.size();i++){
+                    char temp=it[i];
+                    for(char ch='a';ch<='z';ch++){
+                        it[i]=ch;
+                        if(vis.find(it)==vis.end() and uu.find(it)!=uu.end()){
+                            vis.insert(it);
+                            q.push(it);
+
+                            if(it==endWord)
+                                return curr+1;
+
+                        }
                     }
+                    it[i]=temp;
                 }
             }
+            curr++;
         }
-
         return 0;
     }
 };
