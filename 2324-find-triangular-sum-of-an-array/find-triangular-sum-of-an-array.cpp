@@ -1,12 +1,11 @@
 class Solution {
 public:
     int triangularSum(vector<int>& nums) {
-        while(nums.size()>1){
-            vector<int> ans;
-            for(int i=0;i<nums.size()-1;i++){
-                ans.push_back((nums[i]+nums[i+1])%10);
+       for(int k=nums.size()-1;k>=1;k--){
+            for(int i=0;i<k;i++){
+                nums[i]=((nums[i]+nums[i+1])%10);
             }
-            nums=ans;
+            // cout<<k<<endl;
         }
         return nums[0];
     }
