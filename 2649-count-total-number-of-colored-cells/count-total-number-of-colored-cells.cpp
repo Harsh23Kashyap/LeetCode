@@ -4,11 +4,8 @@ public:
         long long c=1;
         long long add=4;
         long long factor=4;
-        for(int i=2;i<=n;i++){
-            c+=add;
-            add+=factor;
-        }
-        return c;
+        
+        return 1+4*n*1ll*(n-1)/2;
     }
 };
 
