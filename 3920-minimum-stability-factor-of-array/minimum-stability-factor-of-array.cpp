@@ -13,15 +13,11 @@ public:
     struct GcdSparse {
         int n, maxK;
         vector<vector<int>> st;
-        vector<int> log2;
 
         GcdSparse(const vector<int>& a, const Solution& sol) {
             n = a.size();
-            // 1) precompute log2[i] = floor(log2(i)) for i=1..n
-            log2.assign(n + 1, 0);
-            for (int i = 2; i <= n; ++i)
-                log2[i] = log2[i >> 1] + 1;
-            maxK = log2[n];
+           
+            maxK = (int)floor(log2(n));
 
             // 2) allocate table: (maxK+1) rows × n columns
             st.assign(maxK + 1, vector<int>(n));
@@ -42,7 +38,7 @@ public:
         // O(1) query gcd(a[L..R])
         int query(int L, int R, const Solution& sol) const {
             int len = R - L + 1;
-            int k   = log2[len];
+            int k   = (int)floor(log2(len));
             int half = 1 << k;
             return sol.hcf(
                 st[k][L],
