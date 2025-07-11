@@ -1,16 +1,15 @@
 class Solution {
-public:
-    // Euclid’s algorithm for GCD
-    int hcf(int a, int b) const {
-        while (b) {
-            int t = b;
-            b = a % b;
-            a = t;
-        }
-        return a;
-    }
+public:    
 
     struct GcdSparse {
+        int hcf(int a, int b) const {
+            while (b) {
+                int t = b;
+                b = a % b;
+                a = t;
+            }
+            return a;
+        }
         int n, maxK;
         vector<vector<int>> st;
 
@@ -18,16 +17,16 @@ public:
             n = a.size();
            
             maxK = (int)floor(log2(n));
-
-            // 2) allocate table: (maxK+1) rows × n columns
-            st.assign(maxK + 1, vector<int>(n));
-            st[0] = a;  // level 0 is the original array
+            st.resize(maxK + 1, vector<int>(n));
+            st[0] = a; 
 
             // 3) build levels 1..maxK
-            for (int k = 1; k <= maxK; ++k) {
-                int half = 1 << (k - 1);  // 2^(k-1)
-                for (int i = 0; i + (half << 1) <= n; ++i) {
-                    st[k][i] = sol.hcf(
+            for (int k = 1; k <= maxK; k++) {
+                int fs=pow(2,k);
+                int half =fs/2;
+                for (int i = 0; i + fs <= n; i++) 
+                {
+                    st[k][i] = hcf(
                         st[k-1][i],
                         st[k-1][i + half]
                     );
@@ -35,12 +34,11 @@ public:
             }
         }
 
-        // O(1) query gcd(a[L..R])
-        int query(int L, int R, const Solution& sol) const {
+        int query(int L, int R)  {
             int len = R - L + 1;
             int k   = (int)floor(log2(len));
-            int half = 1 << k;
-            return sol.hcf(
+            int half = pow(2,k);
+            return hcf(
                 st[k][L],
                 st[k][R - half + 1]
             );
@@ -48,12 +46,12 @@ public:
     };
 
     // Greedy check: can we ensure no stable subarray > L remains
-    bool canReduce(const GcdSparse& st, int n, int L, int maxC) const {
+    bool canReduce(GcdSparse& st, int n, int L, int maxC)  {
         int used = 0, lastMod = -1;
         for (int i = 0; i + L < n; ++i) {
             int j = i + L;
-            if (st.query(i, j, *this) >= 2 && lastMod < i) {
-                lastMod = j;            // modify at j
+            if (st.query(i, j) >= 2 && lastMod < i) {
+                lastMod = j;            
                 if (++used > maxC) 
                     return false;
             }
