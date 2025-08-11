@@ -12,11 +12,6 @@ public:
         return res;
     }
 
-    long long modInverse(long long x) {
-        // Fermat's Little Theorem (m is prime)
-        return modPow(x, m - 2);
-    }
-
     vector<int> productQueries(int n, vector<vector<int>>& queries) {
         vector<int> power;
         int cp = 1;
@@ -30,18 +25,24 @@ public:
 
         vector<long long> ps;
         for (int i = 0; i < power.size(); i++) {
-            if (i == 0) ps.push_back(power[i] % m);
-            else ps.push_back((ps.back() * power[i]) % m);
+            if (i == 0)
+                ps.push_back(power[i] % m);
+            else
+                ps.push_back((ps.back() * power[i]) % m);
         }
 
         vector<int> ans;
         for (auto &q : queries) {
-            int l = q[0], r = q[1];
+            int l = q[0];
+            int r = q[1];
+
             long long numerator = ps[r];
-            if (l > 0) {
-                numerator = (numerator * modInverse(ps[l - 1])) % m;
-            }
-            ans.push_back((int)numerator);
+            long long denominator = (l == 0 ? 1 : ps[l - 1]);
+
+            // Use modular inverse instead of division
+            long long inv = modPow(denominator, m - 2);
+            long long res = (numerator * inv) % m;
+            ans.push_back((int)res);
         }
         return ans;
     }
