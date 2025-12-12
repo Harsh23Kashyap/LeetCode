@@ -1,6 +1,7 @@
 class Solution {
 public:
     vector<int> mentions;
+    int all=0;
     priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> offline;
     vector<int> online;
 
@@ -12,9 +13,7 @@ public:
                 }
             }
             else if(men=="ALL"){
-                for(int i=0;i<online.size();i++){
-                        mentions[i]++;
-                }
+               all++;
             }
             else{
                 stringstream ss(men);
@@ -72,7 +71,8 @@ public:
                 online[user]=0;
             }
         }
-
+        for(int i=0;i<mentions.size();i++)
+        mentions[i]+=all;
         return mentions;
 
 
