@@ -1,67 +1,68 @@
 class Solution {
 public:
-    static const int MOD = 1e9 + 7;
+    int MOD = 1e9 + 7;
 
-    vector<vector<int>> states;
-    vector<vector<int>> compat;
-    int n;
+    unordered_map<string, vector<string>> compat;
 
-    void genStates(vector<int>& curr, int idx) {
-        if (idx == n) {
-            states.push_back(curr);
+    void genStates(vector<string>& states, string& res, int n){
+        if(res.size() == n){
+            states.push_back(res);
             return;
         }
-        for (int c = 0; c < 3; c++) {
-            if (idx > 0 && curr[idx - 1] == c) continue;
-            curr[idx] = c;
-            genStates(curr, idx + 1);
+        for(char ch = 'a'; ch <= 'c'; ch++){
+            if(!res.empty() && res.back() == ch) 
+                continue;
+            res.push_back(ch);
+            genStates(states, res, n);
+            res.pop_back();
         }
     }
 
-    bool compatible(const vector<int>& a, const vector<int>& b) {
-        for (int i = 0; i < n; i++) {
-            if (a[i] == b[i]) return false;
+    bool compatible(const string& a, const string& b){
+        for(int i = 0; i < a.size(); i++){
+            if(a[i] == b[i]) 
+                return false;
         }
         return true;
     }
 
     int colorTheGrid(int m, int n) {
-        // 🔥 CRITICAL FIX
-        if (n > m) swap(n, m);
-        this->n = n;
+        if (n > m) 
+            return colorTheGrid(n, m);
+        vector<string> states;
+        string temp;
+        genStates(states, temp, n);
 
-        // 1️⃣ Generate valid row states
-        vector<int> curr(n);
-        genStates(curr, 0);
-        int S = states.size();
-
-        // 2️⃣ Precompute compatibility
-        compat.assign(S, {});
-        for (int i = 0; i < S; i++) {
-            for (int j = 0; j < S; j++) {
-                if (compatible(states[i], states[j])) {
-                    compat[i].push_back(j);
+        for(int i = 0; i < states.size(); i++){
+            for(int j = 0; j < states.size(); j++){
+                if(compatible(states[i], states[j])){
+                    compat[states[i]].push_back(states[j]);
                 }
             }
         }
 
-        // 3️⃣ DP
-        vector<long long> dp_prev(S, 1), dp_cur(S);
+        unordered_map<string, long long> prevdp, currdp;
 
-        for (int row = 1; row < m; row++) {
-            fill(dp_cur.begin(), dp_cur.end(), 0);
-            for (int i = 0; i < S; i++) {
-                for (int j : compat[i]) {
-                    dp_cur[i] = (dp_cur[i] + dp_prev[j]) % MOD;
+        for(auto& s : states)
+            prevdp[s] = 1;
+        
+
+        // build row by row
+        for(int row = 1; row < m; row++){
+            unordered_map<string, long long>  currdp;
+            for(auto s : states){
+                long long ways = 0;
+                for(auto p : compat[s]){
+                    ways = (ways + prevdp[p]) % MOD;
                 }
+                currdp[s] = ways;
             }
-            dp_prev.swap(dp_cur);
+            prevdp=currdp;
         }
 
-        // 4️⃣ Sum result
         long long ans = 0;
-        for (long long x : dp_prev) {
-            ans = (ans + x) % MOD;
+        for(auto it : prevdp){
+            ans = (ans + it.second) % MOD;
         }
         return ans;
     }
