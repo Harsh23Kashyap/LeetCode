@@ -4,7 +4,7 @@ public:
 
     unordered_map<string, vector<string>> compat;
 
-    void genStates(vector<string>& states, string& res, int n){
+    void genStates(vector<string>& states, string res, int n){
         if(res.size() == n){
             states.push_back(res);
             return;
@@ -12,9 +12,7 @@ public:
         for(char ch = 'a'; ch <= 'c'; ch++){
             if(!res.empty() && res.back() == ch) 
                 continue;
-            res.push_back(ch);
-            genStates(states, res, n);
-            res.pop_back();
+            genStates(states, res +ch, n);
         }
     }
 
@@ -30,24 +28,23 @@ public:
         if (n > m) 
             return colorTheGrid(n, m);
         vector<string> states;
-        string temp;
-        genStates(states, temp, n);
+        genStates(states, "", n);
 
         for(int i = 0; i < states.size(); i++){
-            for(int j = 0; j < states.size(); j++){
+            for(int j = i+1; j < states.size(); j++){
                 if(compatible(states[i], states[j])){
                     compat[states[i]].push_back(states[j]);
+                    compat[states[j]].push_back(states[i]);
                 }
             }
         }
 
         unordered_map<string, long long> prevdp, currdp;
 
-        for(auto& s : states)
+        for(auto s : states)
             prevdp[s] = 1;
         
 
-        // build row by row
         for(int row = 1; row < m; row++){
             unordered_map<string, long long>  currdp;
             for(auto s : states){
