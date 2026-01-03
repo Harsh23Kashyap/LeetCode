@@ -1,17 +1,65 @@
 class Solution {
 public:
-    int numOfWays(int n) {
-        
-        long long xyx=6, xyz=6, m=1e9+7;
+   int MOD = 1e9 + 7;
 
-        for(int i=2;i<=n;i++){
-            long long new_xyx= (3*xyx+2*xyz)%m;
-            long long new_xyz= (2*xyx+2*xyz)%m;
+    unordered_map<string, vector<string>> compat;
 
-            xyx=new_xyx;
-            xyz=new_xyz;
+    void genStates(vector<string>& states, string res, int n){
+        if(res.size() == n){
+            states.push_back(res);
+            return;
         }
-        return (xyx+xyz)%m;
+        for(char ch = 'a'; ch <= 'c'; ch++){
+            if(!res.empty() && res.back() == ch) 
+                continue;
+            genStates(states, res +ch, n);
+        }
+    }
+     bool compatible(const string& a, const string& b){
+        for(int i = 0; i < a.size(); i++){
+            if(a[i] == b[i]) 
+                return false;
+        }
+        return true;
+    }
+
+
+    int numOfWays(int n) {
+        vector<string> states;
+        genStates(states, "", 3);
+
+        for(int i = 0; i < states.size(); i++){
+            for(int j = i+1; j < states.size(); j++){
+                if(compatible(states[i], states[j])){
+                    compat[states[i]].push_back(states[j]);
+                    compat[states[j]].push_back(states[i]);
+                }
+            }
+        }
+
+        unordered_map<string, long long> prevdp, currdp;
+
+        for(auto s : states)
+            prevdp[s] = 1;
+        
+
+        for(int row = 1; row < n; row++){
+            unordered_map<string, long long>  currdp;
+            for(auto s : states){
+                long long ways = 0;
+                for(auto p : compat[s]){
+                    ways = (ways + prevdp[p]) % MOD;
+                }
+                currdp[s] = ways;
+            }
+            prevdp=currdp;
+        }
+
+        long long ans = 0;
+        for(auto it : prevdp){
+            ans = (ans + it.second) % MOD;
+        }
+        return ans;
     }
 };
 
