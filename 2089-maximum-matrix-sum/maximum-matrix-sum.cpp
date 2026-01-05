@@ -1,21 +1,42 @@
 class Solution {
 public:
-    long long maxMatrixSum(vector<vector<int>>& m) {
-        int r=m.size(),c=m[0].size();
-        long long  sum=0;
-        int mini=INT_MAX;
-        int nc=0;
-        for(int i=0;i<r;i++)
-        {
-            for(int j=0;j<c;j++)
-            {
-                if(m[i][j]<0 )
-                    nc++;
-                mini=min(mini,abs(m[i][j]));
-                sum+=abs(m[i][j]);
+    long long max(long long a, long long b){
+        if(a>=b)
+        return a;
+        return b;
+
+    }
+    long long min(long long a, long long b){
+        if(a>=b)
+        return b;
+        return a;
+
+    }
+    long long maxMatrixSum(vector<vector<int>>& matrix) {
+         long long neg=0,pos=0;
+         long long tn=0;
+         long long sn=INT_MIN,sp=INT_MAX;
+
+        for(auto it:matrix){
+            for(auto jt:it){
+                if(jt<0){
+                    tn++;
+                    sn=max(sn,jt);
+                    neg+=jt;
+                }
+                else{
+                    pos+=jt;
+                    sp=min(sp,jt);
+
+                }
             }
         }
-        return nc%2==0?sum:sum-mini-mini;
-
+        if(tn%2==0)
+            return pos-neg;
+            // cout<<sn<<" "<<sp<<endl;
+        if(abs(sn)<sp){
+            return pos-neg+2*sn;
+        }
+        return pos-neg-2*sp;
     }
 };
