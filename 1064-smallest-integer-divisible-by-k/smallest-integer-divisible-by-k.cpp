@@ -1,23 +1,17 @@
 class Solution {
 public:
     int smallestRepunitDivByK(int k) {
-        if(k==2 or k==5 or k==4 or k==6)
-        return -1;
-        unordered_set<int> u;
-        int r=1;
-        int sz=1;
-        while(true){
-            cout<<r<<endl;
-            if(r%k==0)
-                return sz;
-            
-            r=((r%k)*(10%k)+(1%k))%k;
-            
-            if(u.find(r)!=u.end())
-                return -1;
-            u.insert(r);
-            sz++;
+         if (k % 2 == 0 || k % 5 == 0)
+            return -1;
+
+        int remainder = 0;
+
+        for (int len = 1; len <= k; len++) {
+            remainder = (remainder * 10 + 1) % k;
+            if (remainder == 0)
+                return len;
         }
+
         return -1;
     }
 };
