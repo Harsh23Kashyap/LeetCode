@@ -1,15 +1,12 @@
 class Solution {
 public:
 bool nondecreasing(vector<int>& nums){
-cout<<nums[0]<<" ";
     for(int i=1;i<nums.size();i++){
-        // cout<<nums[i]<<" ";
         if(nums[i-1]>nums[i]){
              cout<<endl;
         return false;
         }
     }
-    cout<<endl;
 
     return true;
 }
@@ -17,14 +14,12 @@ cout<<nums[0]<<" ";
         int a=0;
         
         while(!nondecreasing(nums)){
-            cout<<"SZ - "<<nums.size()<<endl;
             a++;
             long long mini=INT_MAX;
             for(int i=0;i<nums.size()-1;i++){
                 if(nums[i]+nums[i+1]<mini)
                 mini=nums[i]+nums[i+1];
             }
-            cout<<"MINI "<<mini<<endl;
             vector<int> copy;
             bool found=false;
             int i = 0;
