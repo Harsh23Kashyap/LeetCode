@@ -34,7 +34,6 @@ bool nondecreasing(vector<int>& nums){
                 }
             }
 
-            cout<<endl;
             nums=copy;
 
 
