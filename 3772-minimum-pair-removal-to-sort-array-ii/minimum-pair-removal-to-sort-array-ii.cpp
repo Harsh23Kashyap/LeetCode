@@ -63,8 +63,6 @@ typedef pair<long long, pair<Node*,Node*>> pp;
             //dead kill
             if(dead.find(l)!=dead.end() or dead.find(r)!=dead.end())
                 continue;
-            if(l->next!=r)
-                continue;
             if(l->data+r->data!=it.first)
                 continue;
 
