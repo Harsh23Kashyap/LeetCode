@@ -1,40 +1,30 @@
 class Solution {
 public:
-int maxi=0;
-int n;
-    int dps(int i, int bought, int ck, vector<vector<vector<int>>> &dp,vector<int>& prices ){
-        if(i==n)
-        return 0;
-        if(ck==maxi)
-        return 0;
-        if(dp[i][ck][bought]!=INT_MAX)
-            return dp[i][ck][bought];
-        /* options i have are
-        if already bought then sell today or just move on
-
-        if not bought then just move on or buy tpday*/
-        int res=0;
-        if(bought){
-            //sell
-            res=max(res,prices[i]+dps(i+1,0,ck+1,dp,prices));
-
-            //dot sell
-            res=max(res,dps(i+1,1,ck,dp,prices));
-        }
-        else{
-            //buy
-            res=max(res,-prices[i]+dps(i+1,1,ck,dp,prices));
-
-            //dont buy
-            res=max(res,dps(i+1,0,ck,dp,prices));
-        }
-
-        return dp[i][ck][bought]=res;
-    }
     int maxProfit(int k, vector<int>& prices) {
-        n=prices.size();
-        vector<vector<vector<int>>> dp(n, vector<vector<int>> (k, vector<int> (2,INT_MAX)));
-        maxi=k;
-        return dps(0,0,0,dp,prices);
+        int n = prices.size();
+
+        // dp[i][ck][bought]
+        vector<vector<vector<int>>> dp(n + 1, vector<vector<int>>(k + 1, vector<int>(2, 0)));
+
+        for (int i = n - 1; i >= 0; i--) 
+        {
+            for (int ck = k - 1; ck >= 0; ck--) 
+            {
+
+                // bought = 1
+                dp[i][ck][1] = max(
+                    prices[i] + dp[i + 1][ck + 1][0], // sell
+                    dp[i + 1][ck][1]                  // hold
+                );
+
+                // bought = 0
+                dp[i][ck][0] = max(
+                    -prices[i] + dp[i + 1][ck][1],    // buy
+                    dp[i + 1][ck][0]                  // skip
+                );
+            }
+        }
+
+        return dp[0][0][0];
     }
 };
