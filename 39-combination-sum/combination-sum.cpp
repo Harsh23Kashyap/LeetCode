@@ -1,30 +1,29 @@
 class Solution {
 public:
-    void combo(int i, vector<int> c,int t,   vector<vector<int>> &ans, vector<int> &temp)
-    {
-        if(t==0){
-            ans.push_back(temp);
-            return;
-        }
-        if(i==c.size()){
-            return;
-        }
-        if(t-c[i]<0)
+void dfs(set<vector<int>>& ans, vector<int>&c, int i, int t, vector<int> &pass){
+    if(t==0){
+        ans.insert(pass);
         return;
-        temp.push_back(c[i]);
-        // int j=i+1;
-        // while(j<c.size() and c[j]==c[i]){
-        //     j++;
-        // }
-        combo(i,c,t-c[i],ans,temp);
-        temp.pop_back();
-        combo(i+1,c,t,ans,temp);
     }
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+    if(t<0 or i==c.size())
+    return;
+
+    //take
+    pass.push_back(c[i]);
+    dfs(ans, c, i,t-c[i],pass);
+    pass.pop_back();
+
+    //skip
+    dfs(ans, c, i+1,t,pass);
+}
+    vector<vector<int>> combinationSum(vector<int>& c, int target) {
+        sort(c.begin(),c.end());
         vector<vector<int>> ans;
-        vector<int> temp;
-        sort(candidates.begin(),candidates.end());
-        combo(0,candidates,target,ans,temp);
-        return ans;
+        set<vector<int>> ta;
+        vector<int> u;
+         dfs(ta, c, 0, target, u);
+         for(auto it:ta)
+         ans.push_back(it);
+         return ans;
     }
 };
