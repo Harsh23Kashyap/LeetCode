@@ -1,20 +1,15 @@
 class Solution {
 public:
     bool mergeTriplets(vector<vector<int>>& triplets, vector<int>& target) {
-
-        bool a = false, b = false, c = false;
-
-        for (auto& triplet : triplets) {
-            if (triplet[0] <= target[0] and triplet[1] <= target[1] and triplet[2] <= target[2])
-            {
-   
-
-                if (triplet[0] == target[0]) a = true;
-                if (triplet[1] == target[1]) b = true;
-                if (triplet[2] == target[2]) c = true;
-            }
+        bool p1=false, p2=false, p3=false;
+        for(auto it:triplets){
+            if(it[0]==target[0] and it[1]<=target[1] and it[2]<=target[2])
+            p1=true;
+            if(it[0]<=target[0] and it[1]==target[1] and it[2]<=target[2])
+            p2=true;
+            if(it[0]<=target[0] and it[1]<=target[1] and it[2]==target[2])
+            p3=true;
         }
-
-        return a and b and c;
+        return p1 and p2 and p3;
     }
 };
