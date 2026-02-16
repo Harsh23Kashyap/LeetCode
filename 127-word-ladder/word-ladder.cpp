@@ -1,37 +1,38 @@
 class Solution {
 public:
-    int ladderLength(string beginWord, string endWord, vector<string>& wl) {
-        unordered_set<string> uu(wl.begin(),wl.end());
+    void pass(queue<string>& q, string w, unordered_set<string> &vis, unordered_set<string>& words){
 
-
-        unordered_set<string> vis;
-
+        for(int i=0;i<w.size();i++){
+            char temp=w[i];
+            for(char ch='a';ch<='z';ch++){
+                w[i]=ch;
+                if(words.find(w)!=words.end()){
+                    if(vis.find(w)==vis.end()){
+                        vis.insert(w);
+                        q.push(w);
+                    }
+                }
+            }
+            w[i]=temp;
+        }
+    }
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
         queue<string> q;
-
+        unordered_set<string> words(wordList.begin(),wordList.end());
+        unordered_set<string> vis;
+        int c=1;
         q.push(beginWord);
-        int curr=1;
         while(!q.empty()){
             int sz=q.size();
             while(sz--){
                 auto it=q.front();
                 q.pop();
-                for(int i=0;i<it.size();i++){
-                    char temp=it[i];
-                    for(char ch='a';ch<='z';ch++){
-                        it[i]=ch;
-                        if(vis.find(it)==vis.end() and uu.find(it)!=uu.end()){
-                            vis.insert(it);
-                            q.push(it);
-
-                            if(it==endWord)
-                                return curr+1;
-
-                        }
-                    }
-                    it[i]=temp;
-                }
+                if(it==endWord)
+                return c;
+                pass(q,it,vis,words);
             }
-            curr++;
+
+        c++;
         }
         return 0;
     }
