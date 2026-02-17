@@ -1,23 +1,40 @@
 class Solution {
 public:
-    int maximumRobots(vector<int>& chargeTimes, vector<int>& runningCosts, long long budget) {
-        long long sum = 0;
+    int maximumRobots(vector<int>& chargeTimes,
+                      vector<int>& runningCosts,
+                      long long budget) {
+
         int n = chargeTimes.size();
-        deque<int> d;
-        int i = 0, res = 0;
-        for (int j = 0; j < n; ++j) {
-            sum += runningCosts[j];
-            while (!d.empty() && chargeTimes[d.back()] <= chargeTimes[j])
-                d.pop_back();
-            d.push_back(j);
-            while (i <= j && chargeTimes[d.front()] + (j - i + 1) * sum > budget) {
-                sum -= runningCosts[i];
-                if (d.front() == i)
-                    d.pop_front();
-                i++;
+        deque<int> dq;   // store indices
+        long long sum = 0;
+        int l = 0;
+        int ans = 0;
+
+        for (int r = 0; r < n; r++) {
+
+            // maintain monotonic decreasing deque
+            while (!dq.empty() && chargeTimes[dq.back()] <= chargeTimes[r])
+                dq.pop_back();
+
+            dq.push_back(r);
+
+            sum += runningCosts[r];
+
+            // shrink window if cost exceeds budget
+            while (!dq.empty() &&
+                   (long long)chargeTimes[dq.front()] +
+                   (long long)(r - l + 1) * sum > budget) {
+
+                if (dq.front() == l)
+                    dq.pop_front();
+
+                sum -= runningCosts[l];
+                l++;
             }
-            res = max(res, j - i + 1);
+
+            ans = max(ans, r - l + 1);
         }
-        return res; 
+
+        return ans;
     }
 };
