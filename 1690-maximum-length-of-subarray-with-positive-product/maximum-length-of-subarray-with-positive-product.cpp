@@ -1,28 +1,31 @@
 class Solution {
 public:
     int getMaxLen(vector<int>& nums) {
-        int currpos = 0, currneg = 0;
-        int maxi = 0;
+        
+        int pos = 0, neg = 0;
+        int ans = 0;
 
-        for(int i = 0; i < nums.size(); i++) {
-            if(nums[i] == 0) {
-                currpos = 0;
-                currneg = 0;
+        for (int x : nums) {
+            
+            if (x == 0) {
+                pos = 0;
+                neg = 0;
             }
-            else if(nums[i] > 0) {
-                currpos++;
-                currneg = currneg == 0 ? 0: currneg+1;
+            else if (x > 0) {
+                pos = pos + 1;
+                neg = (neg > 0) ? neg + 1 : 0;
             }
-            else { // nums[i] < 0
+            else { // x < 0
+                int newPos = (neg > 0) ? neg + 1 : 0;
+                int newNeg = pos + 1;
 
-                swap(currpos,currneg);
-                currpos = (currpos == 0) ? 0 : currpos + 1;
-                currneg = (currneg == 0) ? 1 : currneg + 1;
+                pos = newPos;
+                neg = newNeg;
             }
 
-            maxi = max(maxi, currpos);
+            ans = max(ans, pos);
         }
 
-        return maxi;
+        return ans;
     }
 };
