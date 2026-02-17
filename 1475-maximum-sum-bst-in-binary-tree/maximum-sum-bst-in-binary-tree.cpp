@@ -11,29 +11,29 @@
  */
 class Solution {
 public:
-int maxSum=0;
+int maxi=0;
+vector<int> pass(TreeNode* root){
+    if(root==NULL)
+        return {1,INT_MAX, INT_MIN,0};
+    
+    auto lbst=pass(root->left);
+    auto rbst=pass(root->right);
 
-    tuple<bool, int, int, int> dfs(TreeNode* root) {
-        if (!root) {
-            // Empty tree is a valid BST
-            return {true, INT_MAX, INT_MIN, 0};
-        }
+    if(lbst[0]==0 or rbst[0]==0)
+        return {0,INT_MAX, INT_MIN,0};
+    if(!(lbst[2]<root->val and rbst[1]>root->val))
+        return  {0,INT_MAX, INT_MIN,0};
+    if(lbst[2]>rbst[1])
+        return  {0,INT_MAX, INT_MIN,0};
+    maxi=max(maxi,lbst[3]+rbst[3]+root->val);
+    int minVal = min(root->val, lbst[1]);
+    int maxVal = max(root->val, rbst[2]);
 
-        auto [lBST, lMin, lMax, lSum] = dfs(root->left);
-        auto [rBST, rMin, rMax, rSum] = dfs(root->right);
+    return {1,minVal,maxVal,lbst[3]+rbst[3]+root->val};
 
-        if (lBST && rBST && root->val > lMax && root->val < rMin) {
-            int currSum = root->val + lSum + rSum;
-            maxSum = max(maxSum, currSum);
-            return {true, min(root->val, lMin), max(root->val, rMax), currSum};
-        }
-
-        // Return false BST with dummy values
-        return {false, 0, 0, 0};
-    }
-
+}
     int maxSumBST(TreeNode* root) {
-        dfs(root);
-        return maxSum;
+         pass(root);
+         return maxi;
     }
 };
