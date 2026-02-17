@@ -1,6 +1,8 @@
 class Solution {
 public:
-    bool backtrack(vector<int>& jobs, vector<int>& workers, int idx, int limit) {
+    bool backtrack(vector<int>& jobs, vector<int>& workers,
+                   int idx, int limit) {
+        
         if (idx == jobs.size())
             return true;
 
@@ -18,8 +20,8 @@ public:
                 workers[i] -= currJob;
             }
 
-            // pruning
-            if (workers[i] == 0 || workers[i] + currJob == limit)
+            // 🔥 Massive pruning
+            if (workers[i] == 0)
                 break;
         }
 
@@ -29,7 +31,7 @@ public:
     int minimumTimeRequired(vector<int>& jobs, int k) {
         sort(jobs.rbegin(), jobs.rend());
 
-        int l = *max_element(jobs.begin(), jobs.end());
+        int l = jobs[0];
         int r = accumulate(jobs.begin(), jobs.end(), 0);
 
         while (l < r) {
