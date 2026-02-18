@@ -1,35 +1,39 @@
 class Solution {
 public:
-    int uniqueLetterString(string s) 
-    {
+    int uniqueLetterString(string s) {
         int n = s.size();
-        unordered_map<char,vector<int>> u;
+        unordered_map<char, set<int>> mp;
 
-        // Store indices of each character
+        // store indices
         for (int i = 0; i < n; i++) 
-            u[s[i]].push_back(i);
-    
+            mp[s[i]].insert(i);
+        
 
-        long long result = 0;
+        long long ans = 0;
 
-        for (char ch='A';ch<='Z';ch++) 
-        {
-            if(u.find(ch)==u.end())
-                continue;
-            auto pos=u[ch];
+        for (int i = 0; i < n; i++) {
+            auto &st = mp[s[i]];
 
-            pos.insert(pos.begin(), -1);
-            pos.push_back(n);
+            auto it = st.find(i);
 
-            for (int i = 1; i < pos.size() - 1; i++) {
-                long long prev = pos[i - 1];
-                long long curr = pos[i];
-                long long next = pos[i + 1];
+            int prev = -1;
+            int next = n;
 
-                result += (curr - prev) * (next - curr);
+            // previous occurrence
+            if (it != st.begin()) {
+auto pit = std::prev(it);
+                prev = *pit;
             }
+
+            // next occurrence
+            auto nit = std::next(it);
+            if (nit != st.end()) {
+                next = *nit;
+            }
+
+            ans += 1LL * (i - prev) * (next - i);
         }
 
-        return result;
+        return ans;
     }
 };
