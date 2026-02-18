@@ -1,35 +1,28 @@
 class Solution {
 public:
     vector<int> sequentialDigits(int low, int high) {
-        string s="*123456789";
-        vector<int> ans;
-        string st=to_string(low);
-        string end=to_string(high);
-        int n=st.size();
-        int firstChar=st[0]-'0';
-        while(firstChar+n-1<s.size())
+        vector<int> result;
+
+        int lowLen = to_string(low).length();
+        int highLen = to_string(high).length();
+
+        for (int len = lowLen; len <= highLen; len++) 
         {
-            string firstWindow=s.substr(firstChar,n);
-            if(stoi(firstWindow)>high) break;
-            if(stoi(firstWindow)>=low)
-            ans.push_back(stoi(firstWindow));
-            firstChar++;
+            for (int start = 1; start <= 10 - len; start++) {
+                int num = 0;
+                int digit = start;
+
+                for (int i = 0; i < len; i++) {
+                    num = num * 10 + digit;
+                    digit++;
+                }
+
+                if (num >= low && num <= high) {
+                    result.push_back(num);
+                }
+            }
         }
 
-
-        cout<<firstChar<<endl;
-        for(int k=st.size()+1;k<=end.size();k++){
-           cout<<k<<endl;
-           int i=1;
-           while(i+k-1<s.size()){
-            string firstWindow=s.substr(i,k);
-            if(stoi(firstWindow)>high) break;
-            ans.push_back(stoi(firstWindow));
-            i++;
-           }
-
-        }
-        return ans;
-        
+        return result;
     }
 };
