@@ -1,52 +1,38 @@
 class Solution {
 public:
-    class Trie{
-        public:
-        unordered_map<char, Trie*> child;
-        set<string> words;
+    vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
         
-    };
-     void insert(Trie *t, string s){
-        Trie *temp=t;
-        for(int i=0;i<s.size();i++){
-            char ch=s[i];
-            if (temp->child.find(ch) == temp->child.end()) {
-                temp->child[ch] = new Trie();
+        unordered_map<string, vector<string>> mp;
+        
+        for (string &p : products) {
+            string prefix = "";
+            for (char c : p) {
+                prefix += c;
+                mp[prefix].push_back(p);
             }
-            temp=temp->child[ch];
-             temp->words.insert(s);
-
         }
-     }
-
-    vector<vector<string>> suggestedProducts(vector<string>& products, string sw) {
-    Trie *t = new Trie();
-    for (const string& p : products) {
-        insert(t, p);
-    }
-
-    vector<vector<string>> ans;
-    Trie* curr = t;
-
-    for (char ch : sw) {
-        if (curr && curr->child.find(ch) != curr->child.end()) {
-            curr = curr->child[ch];
+        
+        for (auto &it : mp) 
+            sort(it.second.begin(), it.second.end());
+        
+        vector<vector<string>> result;
+        string prefix = "";
+        
+        // Answer queries
+        for (char c : searchWord) {
+            prefix += c;
+            
             vector<string> temp;
-            int k = 3;
-            for (const auto& word : curr->words) {
-                temp.push_back(word);
-                if (--k == 0) break;
+            
+            if (mp.count(prefix)) {
+                for (int i = 0; i < min(3, (int)mp[prefix].size()); i++) {
+                    temp.push_back(mp[prefix][i]);
+                }
             }
-            ans.push_back(temp);
-        } else {
-            while (ans.size() < sw.size()) {
-                ans.push_back({});
-            }
-            break;
+            
+            result.push_back(temp);
         }
+        
+        return result;
     }
-
-    return ans;
-}
-
 };
