@@ -1,38 +1,19 @@
 class Solution {
 public:
     vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
-        
-        unordered_map<string, vector<string>> mp;
-        
-        for (string &p : products) {
-            string prefix = "";
-            for (char c : p) {
-                prefix += c;
-                mp[prefix].push_back(p);
-            }
-        }
-        
-        for (auto &it : mp) 
-            sort(it.second.begin(), it.second.end());
-        
+                sort(products.begin(), products.end());
         vector<vector<string>> result;
-        string prefix = "";
-        
-        // Answer queries
-        for (char c : searchWord) {
-            prefix += c;
-            
-            vector<string> temp;
-            
-            if (mp.count(prefix)) {
-                for (int i = 0; i < min(3, (int)mp[prefix].size()); i++) {
-                    temp.push_back(mp[prefix][i]);
-                }
+        int l = 0, r = products.size() - 1;
+        for (int i = 0; i < searchWord.length(); i++) {
+            char c = searchWord[i];
+            while (l <= r && (products[l].length() <= i || products[l][i] < c)) l++;
+            while (l <= r && (products[r].length() <= i || products[r][i] > c)) r--;
+            vector<string> suggestion;
+            for (int j = l; j < min(l + 3, r + 1); j++) {
+                suggestion.push_back(products[j]);
             }
-            
-            result.push_back(temp);
+            result.push_back(suggestion);
         }
-        
-        return result;
+        return result; 
     }
 };
