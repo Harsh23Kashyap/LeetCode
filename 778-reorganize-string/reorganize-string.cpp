@@ -2,41 +2,44 @@ class Solution {
 public:
     string reorganizeString(string s) {
         unordered_map<char,int> u;
-        int n=s.size();
-        for(char ch:s){
-           u[ch]++;
+        for(auto it:s){
+            u[it]++;
         }
-        vector<pair<int,char>> vv;
+
+        priority_queue<pair<int,char>> pq    ;
         for(auto it:u){
-            vv.push_back({it.second,it.first});
+            pq.push({it.second, it.first});
         }
-
+        string ans="";
         
-       sort(vv.rbegin(),vv.rend());
+        while(pq.size()>1){
+            auto [c1,s1]=pq.top();
+            pq.pop();
+            auto [c2,s2]=pq.top();
+            pq.pop();
 
-       if (vv[0].first > (n + 1) / 2)
-            return "";
 
-        string a(n, ' ');
+            ans+=s1;
+            ans+=s2;
+            c1--,c2--;
 
-        int even=0,odd=1;
-        for(int i=0;i<vv.size();i++){
-            int freq=vv[i].first;
-            char ch=vv[i].second;
-            while(even<a.size() and freq>0){
-                a[even]=ch;
-                freq--;
-                even+=2;
+            if(c1>0){
+                pq.push({c1,s1});
             }
-            if(even>=a.size()){
-            while(odd<a.size() and freq>0){
-                a[odd]=ch;
-                freq--;
-                odd+=2;
+            if(c2>0){
+                pq.push({c2,s2});
             }
-        }
-        }
-        return a;
 
-    }
+
+        }
+
+        if(!pq.empty()){
+            auto [c1,s1]=pq.top();
+            if(c1>1){
+                return "";
+            }
+            ans+=s1;
+        }
+        return ans;
+    }   
 };
