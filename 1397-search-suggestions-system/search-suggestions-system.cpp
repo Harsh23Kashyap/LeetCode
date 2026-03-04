@@ -26,32 +26,36 @@ public:
    
 
     vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
-    vector<vector<string>> ans;
-    sort(products.begin(), products.end());
+         vector<vector<string>> ans;
+        sort(products.begin(), products.end());
 
-    for(auto &it : products)
-        insertAt(it);
+         for(auto it:products)
+            insertAt(it);
 
-    Trie* curr = root;
-    bool prefixExists = true;
+         
 
-    for(int i = 0; i < searchWord.size(); i++) {
+        Trie* curr=root;
+        bool prefix=true;
+         for(int i=0;i<searchWord.size();i++){
+            if(prefix and curr->children.find(searchWord[i]) != curr->children.end()){
+            curr=curr->children[searchWord[i]];
+             vector<string> temp=curr->words;
+            sort(temp.begin(),temp.end());
+            // cout<<temp.size()<<endl;
+            if(temp.size()<=3)
+                ans.push_back(temp);
+            else
+                ans.push_back({temp[0],temp[1],temp[2]});
 
-        if(prefixExists && curr->children.count(searchWord[i])) {
-            curr = curr->children[searchWord[i]];
-
-            vector<string> temp = curr->words;
-            if(temp.size() > 3)
-                temp.resize(3);
-
-            ans.push_back(temp);
-        }
-        else {
-            prefixExists = false;
-            ans.push_back({});
-        }
+            }
+            else{
+                prefix=false;
+                ans.push_back({});
+                continue;
+            }
+           
+            // ans.push_back(curr->words);
+         }
+         return ans;
     }
-
-    return ans;
-}
 };
