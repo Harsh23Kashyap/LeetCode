@@ -1,19 +1,57 @@
 class Solution {
 public:
-    vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
-                sort(products.begin(), products.end());
-        vector<vector<string>> result;
-        int l = 0, r = products.size() - 1;
-        for (int i = 0; i < searchWord.length(); i++) {
-            char c = searchWord[i];
-            while (l <= r && (products[l].length() <= i || products[l][i] < c)) l++;
-            while (l <= r && (products[r].length() <= i || products[r][i] > c)) r--;
-            vector<string> suggestion;
-            for (int j = l; j < min(l + 3, r + 1); j++) {
-                suggestion.push_back(products[j]);
-            }
-            result.push_back(suggestion);
+    class Trie{
+        public:
+        unordered_map<char,Trie*> children;
+        vector<string> words;
+        bool possible;
+        char ch;
+        Trie(char ch, bool possible){
+            this->ch=ch;
+            this->possible=possible;
         }
-        return result; 
+    };
+    Trie *root = new Trie('/', false);
+    void insertAt(string word){
+
+        Trie *curr=root;
+        for(int i=0;i<word.size();i++){
+           if(curr->children.find(word[i]) == curr->children.end())
+                curr->children[word[i]]=new Trie(word[i],false);
+          curr = curr->children[word[i]];
+            curr->words.push_back(word);
+        }
+        curr->possible=true;
     }
+   
+
+    vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
+    vector<vector<string>> ans;
+    sort(products.begin(), products.end());
+
+    for(auto &it : products)
+        insertAt(it);
+
+    Trie* curr = root;
+    bool prefixExists = true;
+
+    for(int i = 0; i < searchWord.size(); i++) {
+
+        if(prefixExists && curr->children.count(searchWord[i])) {
+            curr = curr->children[searchWord[i]];
+
+            vector<string> temp = curr->words;
+            if(temp.size() > 3)
+                temp.resize(3);
+
+            ans.push_back(temp);
+        }
+        else {
+            prefixExists = false;
+            ans.push_back({});
+        }
+    }
+
+    return ans;
+}
 };
