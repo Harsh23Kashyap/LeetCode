@@ -1,61 +1,68 @@
 class Solution {
 public:
-string pass(vector<string> words,int c, int w){
-    if(words.size()==1)
-    {
-        string space(w-words[0].size(),' ');
-        return words[0]+space;
-    }
-    int gs=words.size()-1;
-    int rem=w-c;
-    int necessaryGap=rem/gs;
-    int fp=rem-gs*necessaryGap;
-    // cout<<"Word count"<<c<<endl;
-    // cout<<necessaryGap<<endl;
-    // cout<<fp<<endl;
-    string normalGap(necessaryGap,' ');
-    string ans="";
-    for(int i=0;i<words.size();i++){
-        ans=ans+words[i];
-        if(i==words.size()-1)
-            continue;
-        ans=ans+normalGap;
-        if(fp>0){
-            fp--;
-            ans=ans+" ";
-        }
-    }
-    return ans;
-}
     vector<string> fullJustify(vector<string>& words, int maxWidth) {
-        vector<string> currStack;
+
+        int n = words.size();
+        vector<int> pref(n+1,0);
+
+        for(int i=0;i<n;i++)
+            pref[i+1] = pref[i] + words[i].size();
+
         vector<string> ans;
-        int c=0;
-        for (int i=0;i<words.size();i++){
-            c+=words[i].size();
-            if(c+currStack.size()>maxWidth){
-                c=c-words[i].size();
-                string temp=pass(currStack,c,maxWidth);
-                ans.push_back(temp);
-                c=words[i].size();
-                currStack.clear();
-                
+
+        int i = 0;
+
+        while(i < n){
+
+            int j = i;
+ 
+            while(j < n){
+                int len = pref[j+1] - pref[i];
+                int gaps = j - i;
+                if(len + gaps <= maxWidth) j++;
+                else break;
             }
-            currStack.push_back(words[i]);
 
-        }
-        string temp="";
-        if(currStack.size()!=0)
-        {
-            for(auto it:currStack)
-            temp=temp+it+" ";
+            j--;
+
+            int wordsLen = pref[j+1] - pref[i];
+            int gaps = j - i;
+            int spaces = maxWidth - wordsLen;
+
+            string line = "";
+ 
+            if(j == n-1 || gaps == 0){
+
+                for(int k=i;k<=j;k++){
+                    line += words[k];
+                    if(k != j) line += " ";
+                }
+
+                line += string(maxWidth - line.size(),' ');
+            }
+            else{
+
+                int each = spaces / gaps;
+                int extra = spaces % gaps;
+
+                for(int k=i;k<=j;k++){
+
+                    line += words[k];
+
+                    if(k < j){
+                        line += string(each,' ');
+                        if(extra > 0){
+                            line += " ";
+                            extra--;
+                        }
+                    }
+                }
+            }
+
+            ans.push_back(line);
+            i = j + 1;
         }
 
-        temp.pop_back();
-        int k=maxWidth-temp.size();
-        string add(k,' ');
-        temp=temp+add;
-        ans.push_back(temp);
         return ans;
     }
 };
