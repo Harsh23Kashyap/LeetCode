@@ -1,29 +1,28 @@
 class Solution {
 public:
-string ans="";
-bool pass(string res, int i,int len,unordered_set<string> u){
-    if(u.find(res)==u.end()){
-        // cout<<res<<" works"<<endl;
-        ans=res;
-        return true;
+    vector<string> ans;
+    void recur(string s, int i, int n){
+        if(i==n){
+            // cout<<s<<endl;
+            ans.push_back(s);
+            return;
+        }
+
+        recur(s+"0",i+1,n);
+        recur(s+"1",i+1,n);
     }
-    if(i==len)
-        return false;
-
-    //modify current
-    bool check=pass(res,i+1,len,u);
-    res[i]='1';
-    check=check&pass(res,i+1,len,u);
-    return check;
-
-}
     string findDifferentBinaryString(vector<string>& nums) {
+         recur("", 0,nums[0].size());
+        sort(nums.begin(),nums.end());
         
-        unordered_set<string> u(nums.begin(),nums.end());
-
-        string res(nums[0].size(),'0');
-        cout<<res<<endl;
-        pass(res,0,nums[0].size(),u);
-        return ans;
+        int res=0;
+        int i;
+        for(i=0;i<nums.size();i++){
+             if(ans[i]!=nums[i])
+                return ans[i];
+        }
+        if(i<ans.size())
+            return ans[i];
+        return "";
     }
 };
