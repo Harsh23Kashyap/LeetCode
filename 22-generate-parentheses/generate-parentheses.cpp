@@ -1,19 +1,20 @@
 class Solution {
 public:
 void helper(int open,int n, string s, vector<string>& ans){
-    if(s.size()==n*2){
-        if(open!=0)
-        return ;
+if(s.size()==n*2){
+    if(open==0){
         ans.push_back(s);
-        return ;
+        return;
     }
+    return;
+}
 
-    //open and increase
-    helper(open+1, n,s+"(",ans);
+//add open
+if(open<n)
+    helper(open+1,n,s+"(",ans);
 
-    //close and decrease
-    if(open>0)
-     helper(open-1, n,s+")",ans);
+if(open>0)
+  helper(open-1,n,s+")",ans);
 
 
 }
