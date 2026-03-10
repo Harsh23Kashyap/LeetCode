@@ -5,21 +5,21 @@ public:
 
     long long dfs(int z, int o, int last, int limit){
 
-        if(z==0 && o==0) return 1;
+        if(z==0 and o==0) 
+            return 1;
 
         if(dp[z][o][last] != -1)
             return dp[z][o][last];
 
         long long ans = 0;
 
-        // place block of 0s
-        if(last != 0){
-            for(int k=1; k<=limit && k<=z; k++){
+        if(last != 0)
+        {
+            for(int k=1; k<=limit and k<=z; k++){
                 ans = (ans + dfs(z-k, o, 0, limit)) % mod;
             }
         }
 
-        // place block of 1s
         if(last != 1){
             for(int k=1; k<=limit && k<=o; k++){
                 ans = (ans + dfs(z, o-k, 1, limit)) % mod;
