@@ -1,72 +1,38 @@
-long long dp[201][201][2][201];
-
 class Solution {
 public:
     int mod = 1e9+7;
+    long long dp[201][201][3];
 
-    long long power(long long a,long long b){
-        long long res=1;
-        while(b){
-            if(b&1) res=res*a%mod;
-            a=a*a%mod;
-            b>>=1;
-        }
-        return res;
-    }
+    long long dfs(int z, int o, int last, int limit){
 
-    long long nCr(int n,int r){
-        long long num=1,den=1;
-        for(int i=0;i<r;i++){
-            num=num*(n-i)%mod;
-            den=den*(i+1)%mod;
-        }
-        return num*power(den,mod-2)%mod;
-    }
+        if(z==0 && o==0) return 1;
 
-    long long pass(int z,int o,int limit,int curr,int last){
+        if(dp[z][o][last] != -1)
+            return dp[z][o][last];
 
-        if(z==0 && o==0)
-            return 1;
+        long long ans = 0;
 
-        if(last!=-1 && dp[z][o][last][curr]!=-1)
-            return dp[z][o][last][curr];
-
-        long long ans=0;
-
-        // place 0
-        if(z>0){
-            if(last==0){
-                if(curr<limit)
-                    ans=(ans+pass(z-1,o,limit,curr+1,0))%mod;
-            }else{
-                ans=(ans+pass(z-1,o,limit,1,0))%mod;
+        // place block of 0s
+        if(last != 0){
+            for(int k=1; k<=limit && k<=z; k++){
+                ans = (ans + dfs(z-k, o, 0, limit)) % mod;
             }
         }
 
-        // place 1
-        if(o>0){
-            if(last==1){
-                if(curr<limit)
-                    ans=(ans+pass(z,o-1,limit,curr+1,1))%mod;
-            }else{
-                ans=(ans+pass(z,o-1,limit,1,1))%mod;
+        // place block of 1s
+        if(last != 1){
+            for(int k=1; k<=limit && k<=o; k++){
+                ans = (ans + dfs(z, o-k, 1, limit)) % mod;
             }
         }
 
-        if(last!=-1)
-            dp[z][o][last][curr]=ans;
-
-        return ans;
+        return dp[z][o][last] = ans;
     }
 
-    int numberOfStableArrays(int zero,int one,int limit) {
-
-        // shortcut when limit never binds
-        if(limit >= max(zero,one))
-            return nCr(zero+one,zero);
+    int numberOfStableArrays(int zero, int one, int limit) {
 
         memset(dp,-1,sizeof(dp));
 
-        return pass(zero,one,limit,0,-1);
+        return dfs(zero, one, 2, limit); // 2 = start (no last)
     }
 };
