@@ -1,58 +1,37 @@
 class Solution {
 public:
-    static pair<bool,int> isdig(string a){
-        for(int i=0;i<a.size();i++){
-            if(a[i]==' '){
-                i++;
-                while(i<a.size()){
-                    if(a[i]==' ')
-                        i++;
-                    else if(a[i]>='a' && a[i]<='z')
-                        return {true,i};   // letter-log
-                    else
-                        return {false,i};  // digit-log
-                }
-            }
-        }
-        return {false,-1};
-    }
+    static bool cmp(string &a, string &b){
+        int i = a.find(' ');
+        int j = b.find(' ');
 
-    static bool cmp(string a, string b){
-        auto dig1 = isdig(a), dig2 = isdig(b);
+        string contentA = a.substr(i + 1);
+        string contentB = b.substr(j + 1);
 
-        // letter vs digit
-        if(dig1.first != dig2.first)
-            return dig1.first > dig2.first;
+        if (contentA != contentB)
+            return contentA < contentB;
 
-        // both digit → keep order
-        if(!dig1.first && !dig2.first)
-            return false;
+        string idA = a.substr(0, i);
+        string idB = b.substr(0, j);
 
-        // compare contents
-        int i = dig1.second, j = dig2.second;
-        while(i < a.size() && j < b.size()){
-            if(a[i] < b[j]) return true;
-            if(a[i] > b[j]) return false;
-            i++, j++;
-        }
-
-        // shorter content first
-        if(i == a.size() && j != b.size()) return true;
-        if(i != a.size() && j == b.size()) return false;
-
-        // contents equal → compare identifiers
-        int x = 0, y = 0;
-        while(a[x] != ' ' && b[y] != ' '){
-            if(a[x] < b[y]) return true;
-            if(a[x] > b[y]) return false;
-            x++, y++;
-        }
-
-        return false;
+        return idA < idB;
     }
 
     vector<string> reorderLogFiles(vector<string>& logs) {
-        stable_sort(logs.begin(), logs.end(), cmp);
-        return logs;
+        vector<string> letterLogs, digitLogs;
+
+        for (auto &log : logs) {
+            int i = log.find(' ');
+            if (isdigit(log[i + 1]))
+                digitLogs.push_back(log);
+            else
+                letterLogs.push_back(log);
+        }
+
+        sort(letterLogs.begin(), letterLogs.end(), cmp);
+
+        // append digit logs (order preserved)
+        letterLogs.insert(letterLogs.end(), digitLogs.begin(), digitLogs.end());
+
+        return letterLogs;
     }
 };
