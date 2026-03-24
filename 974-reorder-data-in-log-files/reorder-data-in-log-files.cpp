@@ -1,66 +1,58 @@
 class Solution {
 public:
-    static bool cmp(string &a, string &b){
-        bool diga=true;
-        bool digb=true;
-        int i=0;
-        for(i=0;i<a.size();i++){
+    static pair<bool,int> isdig(string a){
+        for(int i=0;i<a.size();i++){
             if(a[i]==' '){
-                break;
+                i++;
+                while(i<a.size()){
+                    if(a[i]==' ')
+                        i++;
+                    else if(a[i]>='a' && a[i]<='z')
+                        return {true,i};   // letter-log
+                    else
+                        return {false,i};  // digit-log
+                }
             }
         }
-        int j=0;
-        for(j=0;j<b.size();j++){
-            if(b[j]==' '){
-                break;
-            }
-        }
-        i++;
-        j++;
-        if(a[i]>='0' and a[i]<='9')
-            diga=true;
-        else diga=false;
-
-        if(b[j]>='0' and b[j]<='9')
-            digb=true;
-        else digb=false;
-
-       if(!diga and digb)
-        return true;
-
-        if(diga and !digb)
-        return false;
-        if(diga and digb)
-        return false;
-        if (!diga && !digb) {
-            string contentA = a.substr(i);
-            string contentB = b.substr(j);
-            if (contentA != contentB)
-                return contentA < contentB;
-
-            string idA = a.substr(0, i - 1);
-            string idB = b.substr(0, j - 1);
-            return idA < idB;
-        }
-
-        return true;
-
-
+        return {false,-1};
     }
-    vector<string> reorderLogFiles(vector<string>& logs) {
-         vector<string> letterLogs, digitLogs;
-         for (auto log : logs) {
-            int i = log.find(' ');
-            if (isdigit(log[i + 1]))
-                digitLogs.push_back(log);
-            else
-                letterLogs.push_back(log);
+
+    static bool cmp(string a, string b){
+        auto dig1 = isdig(a), dig2 = isdig(b);
+
+        // letter vs digit
+        if(dig1.first != dig2.first)
+            return dig1.first > dig2.first;
+
+        // both digit → keep order
+        if(!dig1.first && !dig2.first)
+            return false;
+
+        // compare contents
+        int i = dig1.second, j = dig2.second;
+        while(i < a.size() && j < b.size()){
+            if(a[i] < b[j]) return true;
+            if(a[i] > b[j]) return false;
+            i++, j++;
         }
 
-         sort(letterLogs.begin(), letterLogs.end(), cmp);
+        // shorter content first
+        if(i == a.size() && j != b.size()) return true;
+        if(i != a.size() && j == b.size()) return false;
 
-        // Combine result
-        letterLogs.insert(letterLogs.end(), digitLogs.begin(), digitLogs.end());
-        return letterLogs;
+        // contents equal → compare identifiers
+        int x = 0, y = 0;
+        while(a[x] != ' ' && b[y] != ' '){
+            if(a[x] < b[y]) return true;
+            if(a[x] > b[y]) return false;
+            x++, y++;
+        }
+
+        return false;
+    }
+
+    vector<string> reorderLogFiles(vector<string>& logs) {
+        stable_sort(logs.begin(), logs.end(), cmp);
+        return logs;
     }
 };
