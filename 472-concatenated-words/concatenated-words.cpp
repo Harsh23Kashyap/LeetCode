@@ -1,40 +1,29 @@
 class Solution {
 public:
-    unordered_set<string> dict;
-    unordered_map<string, bool> memo;
-
-    bool canForm(string word) {
-        if (memo.find(word)!=memo.end()) 
-            return memo[word];
-
-        for (int i = 1; i < word.size(); ++i) {
-            string prefix = word.substr(0, i);
-            string suffix = word.substr(i);
-            
-            if (dict.find(prefix)!=dict.end()) {
-                if (dict.find(suffix)!=dict.end() or canForm(suffix)) {
-                    return memo[word] = true;
-                }
-            }
+    bool check(unordered_set<string>& u, string s, int i, vector<int>& dp){
+        if (i == s.size()) return true;
+        if(dp[i]!=-1)
+        return dp[i];
+        for(int j=i+1;j<=s.size();j++){
+            string curr=s.substr(i,j-i);
+            // cout<<curr<<endl;
+            if(u.find(curr)!=u.end() and check(u,s,j,dp))
+            return dp[i]=true;
         }
-        return memo[word] = false;
+        return  dp[i]=false;
     }
-
     vector<string> findAllConcatenatedWordsInADict(vector<string>& words) {
-        for (auto word : words) {
-            dict.insert(word);
-        }
+        unordered_set<string> u(words.begin(),words.end());
 
-        vector<string> result;
+         vector<string> ans;
 
-        for (auto word : words) {
-            dict.erase(word);  
-            if (canForm(word)) 
-                result.push_back(word);
-            dict.insert(word);  
-        }
-
-        return result;
+         for(int i=0;i<words.size();i++){
+            vector<int> dp(words[i].size()+1,-1);
+            u.erase(words[i]);
+            if(check(u,words[i],0,dp))
+            ans.push_back(words[i]);
+            u.insert(words[i]);
+         }
+         return ans;
     }
-
 };
