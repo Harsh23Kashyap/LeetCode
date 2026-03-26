@@ -1,8 +1,7 @@
 class Solution {
 public:
     bool canPartitionGrid(vector<vector<int>>& grid) {
-        int m = grid.size();
-        int n = grid[0].size();
+        int m = grid.size(), n = grid[0].size();
         unordered_map<long long, vector<pair<int, int>>> u;
         vector<long long> rs(m, 0), cs(n, 0);
         long long total = 0;
@@ -16,59 +15,45 @@ public:
             }
         }
 
-        // Horizontal cuts
-        long long topSum = 0;
+        // 🔹 Horizontal cuts
+        long long top = 0;
         for (int i = 0; i < m - 1; i++) {
-            topSum += rs[i];
-            long long botSum = total - topSum;
-            if (check(topSum, botSum, u, true, i, m, n)) return true;
-        }
+            top += rs[i];
+            long long bottom = total - top;
+            if (top == bottom) return true;
 
-        // Vertical cuts
-        long long leftSum = 0;
-        for (int j = 0; j < n - 1; j++) {
-            leftSum += cs[j];
-            long long rightSum = total - leftSum;
-            if (check(leftSum, rightSum, u, false, j, m, n)) return true;
-        }
-
-        return false;
-    }
-
-private:
-    bool check(long long s1, long long s2, unordered_map<long long, vector<pair<int, int>>>& u, 
-               bool isHorizontal, int cutIdx, int m, int n) {
-        if (s1 == s2) return true;
-        
-        long long diff = abs(s1 - s2);
-        if (!u.count(diff)) return false;
-
-        for (auto& cell : u[diff]) {
-            int r = cell.first, c = cell.second;
-            bool inFirstSection = isHorizontal ? (r <= cutIdx) : (c <= cutIdx);
-            
-            // We must remove the cell from the heavier section
-            if ((s1 > s2 && inFirstSection) || (s2 > s1 && !inFirstSection)) {
-                // Connectivity Check
-                if (isHorizontal) {
-                    // Current section is (height rows x n cols)
-                    int sectionHeight = inFirstSection ? (cutIdx + 1) : (m - 1 - cutIdx);
-                    if (n > 1 && sectionHeight > 1) return true; // 2D block
-                    if (n == 1) { // 1D Column
-                        if (inFirstSection && (r == 0 || r == cutIdx)) return true;
-                        if (!inFirstSection && (r == cutIdx + 1 || r == m - 1)) return true;
-                    } else if (sectionHeight == 1) { // 1D Row
-                        if (c == 0 || c == n - 1) return true;
+            long long diff = abs(top - bottom);
+            if (u.count(diff)) {
+                for (auto& c : u[diff]) {
+                    bool inTop = (c.first <= i);
+                    if ((top > bottom && inTop) || (bottom > top && !inTop)) {
+                        int h = inTop ? (i + 1) : (m - 1 - i);
+                        // Rule: 2D block stays connected. 1D needs endpoints.
+                        if (n > 1 && h > 1) return true;
+                        if (n == 1 && (c.first == (inTop ? 0 : i + 1) || c.first == (inTop ? i : m - 1))) return true;
+                        if (h == 1 && (c.second == 0 || c.second == n - 1)) return true;
                     }
-                } else {
-                    // Current section is (m rows x width cols)
-                    int sectionWidth = inFirstSection ? (cutIdx + 1) : (n - 1 - cutIdx);
-                    if (m > 1 && sectionWidth > 1) return true; // 2D block
-                    if (m == 1) { // 1D Row
-                        if (inFirstSection && (c == 0 || c == cutIdx)) return true;
-                        if (!inFirstSection && (c == cutIdx + 1 || c == n - 1)) return true;
-                    } else if (sectionWidth == 1) { // 1D Column
-                        if (r == 0 || r == m - 1) return true;
+                }
+            }
+        }
+
+        // 🔹 Vertical cuts
+        long long left = 0;
+        for (int j = 0; j < n - 1; j++) {
+            left += cs[j];
+            long long right = total - left;
+            if (left == right) return true;
+
+            long long diff = abs(left - right);
+            if (u.count(diff)) {
+                for (auto& c : u[diff]) {
+                    bool inLeft = (c.second <= j);
+                    if ((left > right && inLeft) || (right > left && !inLeft)) {
+                        int w = inLeft ? (j + 1) : (n - 1 - j);
+                        // Rule: 2D block stays connected. 1D needs endpoints.
+                        if (m > 1 && w > 1) return true;
+                        if (m == 1 && (c.second == (inLeft ? 0 : j + 1) || c.second == (inLeft ? j : n - 1))) return true;
+                        if (w == 1 && (c.first == 0 || c.first == m - 1)) return true;
                     }
                 }
             }
