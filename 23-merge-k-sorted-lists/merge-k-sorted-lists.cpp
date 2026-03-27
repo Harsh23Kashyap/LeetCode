@@ -13,28 +13,30 @@ public:
     struct cmp{
         bool operator()(ListNode* a, ListNode* b){
             return a->val>b->val;
-            }
+        }
     };
     ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<ListNode*,vector<ListNode*>,cmp> pq;
-        for(auto it:lists)
-        {
-            if(it)
-                pq.push(it);
+        priority_queue<ListNode*,vector<ListNode*> , cmp> pq;
+        for(int i=0;i<lists.size();i++){
+            ListNode* start=lists[i];
+            if(start!=NULL)
+             pq.push(start);
         }
-        ListNode* prev=new ListNode(0);
-        ListNode* start=prev;
-        while(!pq.empty())
-        {
-            ListNode* remove=pq.top();
+        
+        ListNode* neg=new ListNode(-1);
+        ListNode* head=neg;
+
+        while(!pq.empty()){
+            auto it=pq.top();
             pq.pop();
-            if(remove->next!=NULL)
-                pq.push(remove->next);
-            prev->next=remove;
-            prev=remove;
+            if(it!=NULL and it->next!=NULL)
+                pq.push(it->next);
             
+            neg->next=it;
+            neg=neg->next;
+
         }
-        return start->next;
+        return head->next;
         
     }
 };
