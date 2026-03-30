@@ -1,23 +1,16 @@
 class Solution {
 public:
-    bool checkStrings(string s1, string s2) {
-         
+    bool pass(string s1, string s2,int i){
         string n1="",n2="";
-        for(int i=0;i<s1.size();i+=2){
-            n1+=s1[i];
-            n2+=s2[i];
+        for(int j=i;j<s1.size();j+=2){
+            n1+=s1[j];
+            n2+=s2[j];
         }
         sort(n1.begin(),n1.end());
         sort(n2.begin(),n2.end());
-        if(n1!=n2)
-        return false;
-        n1="",n2="";
-        for(int i=1;i<s1.size();i+=2){
-            n1+=s1[i];
-            n2+=s2[i];
-        }
-         sort(n1.begin(),n1.end());
-        sort(n2.begin(),n2.end());
-       return n1==n2;
+        return n1==n2;
+    }
+    bool checkStrings(string s1, string s2) {    
+     return pass(s1,s2,0) and pass(s1,s2,1); 
     }
 };
