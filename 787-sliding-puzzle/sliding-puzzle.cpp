@@ -1,58 +1,66 @@
 class Solution {
 public:
-    int slidingPuzzle(vector<vector<int>>& board) {
-        unordered_map<int,vector<int>> u;
-        u[0]={1,3};
-        u[1]={0,2,4};
-        u[2]={1,5};
-        u[3]={0,4};
-        u[4]={3,5,1};
-        u[5]={4,2};
-        queue<pair<string,int>> q;
-        int zero=-1;
-        unordered_set<string> us;
+    unordered_map<int, vector<int>> u = {
+        {0,{1,3}}, {1,{0,2,4}}, {2,{1,5}},
+        {3,{0,4}}, {4,{1,3,5}}, {5,{2,4}}
+    };
+
+unordered_set<string> ss;
+    bool check(string res){
+        return res=="123450"; 
+    }
+
+
+    int solve(int k, int l, vector<vector<int>>& board){
         string s="";
         for(int i=0;i<board.size();i++){
-            for(int j=0;j<board[i].size();j++){
+            for(int j=0;j<board[0].size();j++){
                 s+=to_string(board[i][j]);
-                if(board[i][j]==0)
-                    zero=i*3+j;
             }
         }
-        
-        q.push({s,zero});
-        us.insert(s);
+        queue<pair<string,int>> q;
+        int z=k*3+l;
+        q.push({s,z});
         int c=0;
         while(!q.empty())
         {
-            
             int sz=q.size();
             while(sz--){
-                auto [curr, cz]=q.front();
-                // cout<<"Current "<<curr<<endl;
+                auto it=q.front();
+                // cout<<it.first<<endl;
                 q.pop();
-                if(curr=="123450")
-                    return c;
-                
-                vector<int> dx=u[cz];
-                
-                for(auto jt:dx){
-                    string nz=curr;
-                    nz[cz]=nz[jt];
-                    nz[jt]='0';
-                    // cout<<nz<<endl;
-                    if(us.find(nz)==us.end())
+                if(check(it.first))
+                return c;
+
+                int ind0=it.second;
+               
+                for(auto aaaaa:u[ind0]){
+                    string backup=it.first;
+                    swap(backup[ind0],backup[aaaaa]);
+                    if(ss.find(backup)==ss.end())
                     {
-                        us.insert(nz);
-                        q.push({nz,jt});
+                        ss.insert(backup);
+                        q.push({backup,aaaaa});
                     }
                 }
+
+
+
+
+                
             }
-            
             c++;
         }
-        
-        // cout<<s<<endl;
         return -1;
+    }
+    int slidingPuzzle(vector<vector<int>>& board) {
+        for(int i=0;i<board.size();i++){
+            for(int j=0;j<board[0].size();j++){
+                if(board[i][j]==0)
+                    return solve(i,j,board);
+            }
+        }
+        return -1;
+
     }
 };
