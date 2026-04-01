@@ -1,72 +1,46 @@
 class RandomizedSet {
 public:
-
-// class Node{
-//     Node* next;
-//     Node* prev;
-//     int val;
-//     Node(int v){
-//         val=v;
-//         next=NULL;
-//         prev=NULL;
-//     }
-// };
-
-// Node* head=new Node(-1);
-unordered_map<int,int> u;
 vector<int> v;
+unordered_map<int,int> u;
     RandomizedSet() {
+        
     }
     
     bool insert(int val) {
         if(u.find(val)!=u.end())
-            return false;
-            v.push_back(val);
+        return false;
+        v.push_back(val);
+        
         u[val]=v.size()-1;
-        // Node* curr=new Node(val);
-        // u[val]=(curr);
-        // Node* nc=head->next;
-        // if(nc!=NULL){
-        //     nc->prev=curr;
-        //     curr->next=nc;
-        //     head->next=curr;
-        //     curr->prev=head;
-        // }
-        // else{
-        //     head->next=curr;
-        //     curr->prev=head;
 
-        // }
-        // cout<<sz<<endl;
-        return true;
+return true;
     }
     
     bool remove(int val) {
         if(u.find(val)==u.end())
         return false;
+        if(u[val]==v.size()-1){
+            u.erase(val);
+            v.pop_back();
+            return true;
+        }
 
-        // Node* find=u[val];
-        // if(find->next!=NULL)
-        // find->next->prev=find->prev;
-
-        // find->prev->next=find->next;
-        
         int idx=u[val];
-        int lastElement=v.size()-1;
-        u[v[lastElement]]=idx;
-        swap(v[idx],v[lastElement]);
-        v.pop_back();
+        int last=v.size()-1;
+        
+        v[idx]=v[last];
         u.erase(val);
+        u[v[last]]=idx;
+        v.pop_back();
         return true;
-
-
     }
     
     int getRandom() {
-
-        return v[rand()%v.size()];
-
         
+        int n=v.size();
+        int fl=rand()%n;
+
+        return v[fl];
     }
 };
 
