@@ -1,5 +1,53 @@
 class Solution {
 public:
+/*
+CORE IDEA (VERY IMPORTANT — DON'T FORGET):
+
+This is NOT a simple interval or greedy problem.
+This is a DP + "shared resource" problem.
+
+Think of walls between every two adjacent robots as a "bucket".
+
+Each robot can:
+- take walls from left bucket (shoot left)
+- take walls from right bucket (shoot right)
+
+Key observation:
+Only overlap happens when:
+    previous robot shoots RIGHT
+    current robot shoots LEFT
+
+Both try to take walls from SAME bucket (between them).
+
+So instead of geometric overlap of ranges:
+    ❌ don't use interval intersection
+    ❌ don't check robot positions directly
+
+We must use:
+    num[i] = number of walls between robot[i-1] and robot[i]
+
+Overlap = min(
+    how many walls previous robot took from this bucket,
+    how many current robot wants,
+    total walls in this bucket
+)
+
+DP:
+dp[i][0] = robot i shoots LEFT
+dp[i][1] = robot i shoots RIGHT
+
+Transitions:
+- RIGHT is easy → no immediate conflict:
+    dp[i][1] = max(dp[i-1][0], dp[i-1][1]) + right[i]
+
+- LEFT:
+    case 1: prev LEFT → no overlap
+    case 2: prev RIGHT → adjust using bucket overlap (num[i])
+
+Golden rule:
+👉 DP stores counts, not intervals
+👉 Always fix overlap using counts, not geometry
+*/
     int maxWalls(vector<int>& robots, vector<int>& distance, vector<int>& walls) {
         //Great questions
         //first sort
