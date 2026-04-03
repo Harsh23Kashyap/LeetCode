@@ -2,7 +2,7 @@ class Solution {
 public:
     int maxWalls(vector<int>& robots, vector<int>& distance, vector<int>& walls) {
         sort(walls.begin(),walls.end());
-
+        unordered_set<int> uu(walls.begin(),walls.end());
         vector<pair<int,int>> rr;
         for(int i=0;i<robots.size();i++)
             rr.push_back({robots[i],distance[i]});
@@ -36,8 +36,8 @@ public:
             // BUG 2: You assumed shooting right is "basically free". But if prev also shot Right, 
             // they can overlap exactly at rr[i].first. We must subtract that overlap.
             int overlapR = 0;
-            if (rr[i].first <= right[i-1]) { // Guard prevents negative iterator crossing
-                overlapR = upper_bound(walls.begin(),walls.end(), right[i-1])-lower_bound(walls.begin(),walls.end(),rr[i].first);
+            if (rr[i].first <= right[i-1] and uu.find(rr[i].first)!=uu.end()) {  
+                overlapR = 1;
             }
             
             // Compare [Prev Left + Right] vs [Prev Right - Overlap + Right]
