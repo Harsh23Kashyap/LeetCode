@@ -1,18 +1,24 @@
 class Solution {
 public:
     int maxWalls(vector<int>& robots, vector<int>& distance, vector<int>& walls) {
+        //Great questions
+        //first sort
         sort(walls.begin(),walls.end());
         unordered_set<int> uu(walls.begin(),walls.end());
+
         vector<pair<int,int>> rr;
         for(int i=0;i<robots.size();i++)
-            rr.push_back({robots[i],distance[i]});
+            rr.push_back({robots[i],distance[i]}); 
 
         int n=rr.size();
+        //sort and add {robots,walls}
         sort(rr.begin(),rr.end());
 
+        //now we want to find for each robot, there left and rigt range
         vector<int> left(n,0);
         vector<int> right(n,0);
 
+        //now for each robot left is there left range or +1 or the previous robots rigt range and same with right
         for(int i=0;i<rr.size();i++){
             int ld=rr[i].first-rr[i].second;
             int rd=rr[i].first+rr[i].second;
@@ -24,48 +30,49 @@ public:
             right[i]=rd;
         }
 
+
+        //Now traverse;
         vector<vector<int>> dp(n, vector<int> (2,-1));
-        dp[0][0]= upper_bound(walls.begin(),walls.end(), rr[0].first )-lower_bound(walls.begin(),walls.end(),left[0]);
-        dp[0][1]= upper_bound(walls.begin(),walls.end(), right[0] )-lower_bound(walls.begin(),walls.end(),rr[0].first);
+        //for robot 0 noting to its left;
+        dp[0][0]= upper_bound(walls.begin(),walls.end(), rr[0].first)-lower_bound(walls.begin(),walls.end(),left[0]);
+        dp[0][1]=upper_bound(walls.begin(),walls.end(), right[0])-lower_bound(walls.begin(),walls.end(),rr[0].first);
 
-        for(int i=1;i<n;i++)
-        {
- 
-            int rightcount = upper_bound(walls.begin(),walls.end(), right[i])-lower_bound(walls.begin(),walls.end(),rr[i].first);
+        for(int i=1;i<n;i++){
 
-            // BUG 2: You assumed shooting right is "basically free". But if prev also shot Right, 
-            // they can overlap exactly at rr[i].first. We must subtract that overlap.
-            int overlapR = 0;
-            if (rr[i].first <= right[i-1] and uu.find(rr[i].first)!=uu.end()) {  
-                overlapR = 1;
-            }
-            
-            // Compare [Prev Left + Right] vs [Prev Right - Overlap + Right]
-            dp[i][1]=max(dp[i-1][0] + rightcount, dp[i-1][1] - overlapR + rightcount);
+            //when we try for right, we are basically free as we will handle in next for oevrlap
 
+            int rwalls=upper_bound(walls.begin(),walls.end(), right[i]  )-lower_bound(walls.begin(),walls.end(),rr[i].first);
+            //two case prev left this right
+            int rcond1=dp[i-1][0]+rwalls;
+            //prev rigt this right, overlap can happen at ronbot idnex
+            int overlapr=0;
+            if(right[i-1]>=rr[i].first and uu.find(rr[i].first)!=uu.end())
+                overlapr=1;
+            int rcond2=dp[i-1][1]-overlapr+rwalls;
 
-            // --- LEFT LOGIC --- 
-            int leftcount=upper_bound(walls.begin(),walls.end(), rr[i].first)-lower_bound(walls.begin(),walls.end(),left[i]);
-            
-            // BUG 3: "when we do left and previous is left, then no issues" -> WRONG.
-            // They both stop/start exactly at rr[i-1].first. So if there's a wall exactly there, it's double-counted.
-            int overlapLL = 0;
-            if (left[i] <= rr[i-1].first and uu.find(rr[i-1].first)!=uu.end()) { // Guard prevents negative iterator crossing
-                overlapLL = 1;
-            }
-            int lcond=dp[i-1][0] - overlapLL + leftcount;
+            dp[i][1]=max(rcond1,rcond2);
 
-            // BUG 4: Prevent iterators crossing causing negative numbers!
-            // If left[i] > right[i-1], upper_bound - lower_bound is NEGATIVE, causing you to ADD walls. 
-            int overlapLR = 0;
-            if (left[i] <= right[i-1]) { // Guard prevents negative iterator crossing
-                overlapLR=upper_bound(walls.begin(),walls.end(), right[i-1])-lower_bound(walls.begin(),walls.end(),left[i]);
-            }
-            int lcond2=dp[i-1][1] - overlapLR + leftcount;
+            //when we look at left /multiple cases
+            //when we do left and previous is left, then  issues of overlap at robot[i-1]
+            int lwalls=upper_bound(walls.begin(),walls.end(), rr[i].first)-lower_bound(walls.begin(),walls.end(),left[i]);
+            int overlapl=0;
+            if(left[i]<=rr[i-1].first and uu.find(rr[i-1].first)!=uu.end())
+                overlapl=1;
+            int lcond2=dp[i-1][0]-overlapl+lwalls;
 
-            dp[i][0]=max(lcond,lcond2);
+            //second is when prev also shoots right and this robots shoots left, overlap chances
+            int overlapr2=0;
+            if(right[i-1]>=left[i])
+           overlapr2=upper_bound(walls.begin(),walls.end(), right[i-1])-lower_bound(walls.begin(),walls.end(),left[i]);
+            int lcond1=dp[i-1][1]-overlapr2+lwalls;
+
+            dp[i][0]=max(lcond1,lcond2);
+
         }
-        
         return max(dp.back()[0],dp.back()[1]);
+
+
+
+        
     }
 };
