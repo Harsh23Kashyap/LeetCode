@@ -44,21 +44,19 @@ public:
             dp[i][1]=max(dp[i-1][0] + rightcount, dp[i-1][1] - overlapR + rightcount);
 
 
-            // --- LEFT LOGIC ---
-            // BUG 1: Removed the "+ 1" from rr[i].first + 1
+            // --- LEFT LOGIC --- 
             int leftcount=upper_bound(walls.begin(),walls.end(), rr[i].first)-lower_bound(walls.begin(),walls.end(),left[i]);
             
             // BUG 3: "when we do left and previous is left, then no issues" -> WRONG.
             // They both stop/start exactly at rr[i-1].first. So if there's a wall exactly there, it's double-counted.
             int overlapLL = 0;
-            if (left[i] <= rr[i-1].first) { // Guard prevents negative iterator crossing
-                overlapLL = upper_bound(walls.begin(),walls.end(), rr[i-1].first)-lower_bound(walls.begin(),walls.end(),left[i]);
+            if (left[i] <= rr[i-1].first and uu.find(rr[i-1].first)!=uu.end()) { // Guard prevents negative iterator crossing
+                overlapLL = 1;
             }
             int lcond=dp[i-1][0] - overlapLL + leftcount;
 
             // BUG 4: Prevent iterators crossing causing negative numbers!
-            // If left[i] > right[i-1], upper_bound - lower_bound is NEGATIVE, causing you to ADD walls.
-            // Also removed the "+ 1" from right[i-1] + 1
+            // If left[i] > right[i-1], upper_bound - lower_bound is NEGATIVE, causing you to ADD walls. 
             int overlapLR = 0;
             if (left[i] <= right[i-1]) { // Guard prevents negative iterator crossing
                 overlapLR=upper_bound(walls.begin(),walls.end(), right[i-1])-lower_bound(walls.begin(),walls.end(),left[i]);
