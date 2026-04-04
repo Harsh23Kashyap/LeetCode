@@ -7,10 +7,17 @@ class MyCalendar {
             int cst=v[m].first,cen=v[m].second;
             //3 conditons
             //1 if st<cst and en>=cen
-            if(st<cen and et>cst)
+            if(st<cst and et>=cen)
             return false;
             //2 if st is greater than cend
            
+            //3 is half overlap
+            if(st<cst and et>cst and et<=cen)
+                return false;
+             if(st>=cst and st<cen and et>cen)
+                return false;
+            if(st >= cst && et <= cen)
+            return false;
              if(st>=cen)
             l=m+1;
             else
