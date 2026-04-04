@@ -1,44 +1,26 @@
 class MyCalendar {
-    private:
-    bool possible(int st, int et){
-        int l=0,h=v.size()-1;
-        while(l<=h){
-            int m=l+(h-l)/2;
-            int cst=v[m].first,cen=v[m].second;
-            //3 conditons
-            //1 if st<cst and en>=cen
-            if(st<cst and et>=cen)
-            return false;
-            //2 if st is greater than cend
-           
-            //3 is half overlap
-            if(st<cst and et>cst and et<=cen)
-                return false;
-             if(st>=cst and st<cen and et>cen)
-                return false;
-            if(st >= cst && et <= cen)
-            return false;
-             if(st>=cen)
-            l=m+1;
-            else
-            h=m-1;
-        }
-        return true;
-    }
+   
 public:
-    vector<pair<int,int>> v;
+    set<pair<int,int>> s;
     MyCalendar() {
         
     }
     
-    bool book(int startTime, int endTime) {
-        if(possible(startTime,endTime))
-        {
-            v.push_back({startTime,endTime});
-            sort(v.begin(),v.end());
-            return true;
-        }
+    bool book(int st, int et) {
+       auto it=s.lower_bound({st,et});
+       if(it!=s.end() and it->first<et)
+       return false;
+
+       if(it!=s.begin()){
+        auto k=prev(it);
+        if(k->second>st)
         return false;
+
+        
+       }
+       s.insert({st,et});
+       return true;
+
     }
 };
 
