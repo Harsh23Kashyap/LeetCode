@@ -1,87 +1,30 @@
 class Solution {
 public:
-    
-    vector<int> sortedIndex;
-    
-    static bool compareIndex(int a, int b,
-                             vector<int>& startTime) {
-        return startTime[a] < startTime[b];
-    }
-    
-    void sortJobs(vector<int>& startTime) {
-        int n = startTime.size();
-        sortedIndex.resize(n);
-        
-        for(int i = 0; i < n; i++)
-            sortedIndex[i] = i;
-        
-        sort(sortedIndex.begin(), sortedIndex.end(),
-             [&](int a, int b) {
-                 return startTime[a] < startTime[b];
-             });
-    }
-    
-    int findNext(int pos,
-                 vector<int>& startTime,
-                 vector<int>& endTime)
-    {
-        int left = pos + 1;
-        int right = sortedIndex.size() - 1;
-        int ans = sortedIndex.size();
-        
-        int currentEnd = endTime[sortedIndex[pos]];
-        
-        while(left <= right) {
-            int mid = left + (right - left) / 2;
+    int jobScheduling(vector<int>& st, vector<int>& et, vector<int>& p) {
+        vector<vector<int>> v; 
+        for(int i=0;i<st.size();i++)
+            v.push_back({st[i],et[i],p[i]});
+        int n = v.size();
+        vector<int> dp(n + 1, 0);
+        sort(v.begin(),v.end());
+        vector<int> starts;
+        for(int i=0;i<v.size();i++)
+            starts.push_back(v[i][0]);
+             
+        for(int i=n-1;i>=0;i--){
+            auto it=v[i];
+            //now we will look for dp[i+1] and combination of curr profit and profit beyond end basially
+            int skip=dp[i+1];
+            int other=v[i][2];
+            //upper bound to find next element greate rthn e
+            auto nex=lower_bound(starts.begin(),starts.end(),v[i][1])-starts.begin();
+            if(nex<n)
+                other+=dp[nex];
             
-            if(startTime[sortedIndex[mid]] >= currentEnd) {
-                ans = mid;
-                right = mid - 1;
-            }
-            else
-                left = mid + 1;
+            dp[i]=max(skip,other);
+
+
         }
-        
-        return ans;
-    }
-    
-    int solve(int pos,
-              vector<int>& startTime,
-              vector<int>& endTime,
-              vector<int>& profit,
-              vector<int>& dp)
-    {
-        if(pos >= sortedIndex.size())
-            return 0;
-        
-        if(dp[pos] != -1)
-            return dp[pos];
-        
-        int skip = solve(pos + 1, startTime, endTime, profit, dp);
-        
-        int nextPos = findNext(pos, startTime, endTime);
-        
-        int take = profit[sortedIndex[pos]] +
-                   solve(nextPos, startTime, endTime, profit, dp);
-        
-        if(take > skip)
-            dp[pos] = take;
-        else
-            dp[pos] = skip;
-        
-        return dp[pos];
-    }
-    
-    int jobScheduling(vector<int>& startTime,
-                      vector<int>& endTime,
-                      vector<int>& profit)
-    {
-        int n = startTime.size();
-        
-        sortJobs(startTime);
-        
-        vector<int> dp(n, -1);
-        
-        return solve(0, startTime, endTime, profit, dp);
+        return dp[0];
     }
 };
