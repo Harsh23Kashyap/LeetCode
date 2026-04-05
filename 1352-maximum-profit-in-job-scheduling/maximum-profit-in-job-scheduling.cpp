@@ -17,7 +17,7 @@ public:
             int skip=dp[i+1];
             int other=v[i][2];
             //upper bound to find next element greate rthn e
-            auto nex=lower_bound(starts.begin(),starts.end(),v[i][1]);
+            auto nex=upper_bound(starts.begin(),starts.end(),v[i][1]-1);
             if(nex!=starts.end())
             {
                 int idx=nex-starts.begin();
