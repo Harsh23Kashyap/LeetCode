@@ -1,40 +1,37 @@
 class Solution {
 public:
-    int dfs(int i, vector<int>& prices, vector<vector<vector<int>>> &dp, int used, int bought){
-        if(used>=2)
-            return 0;
+//st 1 is buy
+//st 0 is not bought now
+    int dfs(vector<int>& prices, int i, int st, int k,  vector<vector<vector<int>>> &dp){
         if(i==prices.size())
         return 0;
+        if(dp[i][st][k]!=-1)
+        return dp[i][st][k];
+        int high=0;
+        if(st==1){
+            //i can hold;
+            int hold=dfs(prices,i+1,st,k,dp);
 
-        if(dp[i][used][bought]!=INT_MAX){
-            return dp[i][used][bought];
+            //i can sell;
+            int sell=dfs(prices,i+1,0,k,dp)+prices[i];
+            high=max(hold,sell);
+
         }
-        int res=0;
-        //if bough already
-        if(bought!=0){
-            //either sell if profitable
-                res=max(res,prices[i]+dfs(i+1,prices,dp,used+1,0));
-            //or hold
-            res=max(res,dfs(i+1,prices,dp,used,bought));
-        }
-        //if not bought
         else{
-        //buy today
-
-        res=max(res,-prices[i]+dfs(i+1,prices,dp,used,1));
-
-
-        //or just move on
-        res=max(res,dfs(i+1,prices,dp,used,bought));
+            // i can but if k>0
+            int buy=0;
+            if(k>0){
+                buy=dfs(prices,i+1,1,k-1,dp)-prices[i];
+            }
+            //i can not buy and move
+            int notbuy=dfs(prices,i+1,st,k,dp);
+             high=max(buy,notbuy);
         }
 
-
-        return dp[i][used][bought]=res;
-    }   
+        return dp[i][st][k]=high;
+    }
     int maxProfit(vector<int>& prices) {
-        int n=prices.size();
-        vector<vector<vector<int>>> dp(n, vector<vector<int>> (3,vector<int> (2,INT_MAX)));
-        // vector<vector<int>> dp(n, vector<int> (2,INT_MAX));
-        return dfs(0,prices,dp,0,0);
+        vector<vector<vector<int>>> dp(prices.size(), vector<vector<int>> (2, vector<int> (3,-1))); 
+        return dfs(prices, 0,0,2,dp);
     }
 };
