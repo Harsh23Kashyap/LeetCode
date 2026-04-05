@@ -17,9 +17,12 @@ public:
             int skip=dp[i+1];
             int other=v[i][2];
             //upper bound to find next element greate rthn e
-            auto nex=lower_bound(starts.begin(),starts.end(),v[i][1])-starts.begin();
-            if(nex<n)
-                other+=dp[nex];
+            auto nex=lower_bound(starts.begin(),starts.end(),v[i][1]);
+            if(nex!=starts.end())
+            {
+                int idx=nex-starts.begin();
+                other+=dp[idx];
+            }
             
             dp[i]=max(skip,other);
 
