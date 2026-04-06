@@ -1,30 +1,48 @@
 class MedianFinder {
 public:
-  priority_queue<int> maxHeap; // smaller half
-    priority_queue<int, vector<int>, greater<int>> minHeap; // larger half
+priority_queue<int, vector<int>, greater<int>> right;
+priority_queue<int> left;
+
     MedianFinder() {
         
     }
-     void addNum(int num) {
-        // Step 1: Add to maxHeap
-        maxHeap.push(num);
+    
+    void addNum(int num) {
+        
+        if(left.empty() and right.empty())
+        right.push(num);
 
-        // Step 2: Ensure ordering property
-        minHeap.push(maxHeap.top());
-        maxHeap.pop();
-
-        // Step 3: Balance sizes
-        if (minHeap.size() > maxHeap.size()) {
-            maxHeap.push(minHeap.top());
-            minHeap.pop();
+        else if (left.size()>right.size()){
+            left.push(num);
+            right.push(left.top());
+            left.pop();
         }
+        else if (right.size()>left.size()){
+            right.push(num);
+            left.push(right.top());
+            right.pop();
+        }
+
+        else{
+            left.push(num);
+            right.push(left.top());
+            left.pop();
+        }
+
+
+
     }
-
+    
     double findMedian() {
-        if (maxHeap.size() == minHeap.size()) {
-            return (maxHeap.top() + minHeap.top()) / 2.0;
-        }
-        return maxHeap.top();
+        if(left.size()>right.size())
+            return left.top();
+        if(left.size()<right.size())
+            return right.top();
+
+        return (left.top()+right.top())/2.0;
+        
+
+        
     }
 };
 
