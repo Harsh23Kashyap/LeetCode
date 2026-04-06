@@ -1,85 +1,85 @@
 class LRUCache {
 public:
-class Node{
-    public:
-    Node* left;
-    Node* right;
-    int key;
-    int val;
-    Node(int k, int c){
-        key=k;
-        val=c;
-    }
+    class Node{ 
+        public:
+        int key;
+        int val;
+        Node* prev;
+        Node* next;
+        Node(int k,int v)
+        {
+            key=k,
+            val=v;
+            next=NULL;
+            prev=NULL;
+        }    
 };
-int cap=0;
 int sz=0;
-unordered_map<int,Node*> u;
-Node* start;
-Node* end;
+int c=0;
+Node* head=new Node(-1,-1);
+Node* tail=new Node(-1,-1);
 
+unordered_map<int, Node*> u;
     LRUCache(int capacity) {
-        cap=capacity;
-        start= new Node(-1,-1);
-        end= new Node(-1,-1);
-        start->left=NULL;
-        start->right=end;
-        end->left=start;
-        end->right=NULL;
+        head->next=tail;
+        tail->prev=head;
+        c=capacity;
     }
-    
+    void deleteNode(Node* a){
+         Node* pprev=a->prev;
+         Node* pnext=a->next;
+         pnext->prev=pprev;
+         pprev->next=pnext;
+
+         u.erase(a->key);
+         delete(a);
+    }
+    void insert(int key, Node* curr){
+        Node* chead=head;
+         Node* pnext=chead->next;
+         curr->prev=head;
+         curr->next=pnext;
+         pnext->prev=curr;
+         head->next=curr;
+    }
     int get(int key) {
+
         if(u.find(key)==u.end())
-        return -1;
-     Node* search=u[key];
-     Node* leftavl=search->left;
-     Node* rightavl=search->right;
-     leftavl->right=rightavl;
-     rightavl->left=leftavl;
+            return -1;
+        
+        Node* curr=u[key];
 
-     Node* afterstart=start->right;
-     search->left=start;
-     search->right=afterstart;
-     start->right=search;
-     afterstart->left=search;
-     return search->val;
+        int val=curr->val;
 
+        deleteNode(curr);
+
+        curr=new Node(key,val);
+        u[key]=curr;
+
+        insert(key,curr);
+        return val;
+        
     }
     
     void put(int key, int value) {
-            // If key exists, update value and move to front
-        if (u.find(key) != u.end()) {
-            Node* existing = u[key];
-            existing->val = value;
-            Node* leftavl=existing->left;
-            Node* rightavl=existing->right;
-            leftavl->right=rightavl;
-            rightavl->left=leftavl;
-
-            Node* afterstart=start->right;
-            existing->left=start;
-            existing->right=afterstart;
-            start->right=existing;
-            afterstart->left=existing;
-            return;
+        if(u.find(key)!=u.end())
+        {
+            deleteNode(u[key]);
+            sz--;
         }
-        Node * newnode=new Node(key,value);
-         Node* afterstart=start->right;
-        newnode->left=start;
-        newnode->right=afterstart;
-        start->right=newnode;
-        afterstart->left=newnode;
-        if(sz==cap){
-            Node* beforelast=end->left;
-            Node* beforebeforelast=beforelast->left;
-            u.erase(beforelast->key);
-            beforebeforelast->right=end;
-            end->left=beforebeforelast;
-            // del beforelast;
+        Node* curr=new Node(key,value);
+        u[key]=curr;
 
+        insert(key,curr);
+        
+        sz++;
+        if(sz>c){
+            sz--;
+            Node* last=tail->prev;
+            deleteNode(last);
         }
-        else sz++;
 
-        u[key]=newnode;
+        
     }
 };
 
