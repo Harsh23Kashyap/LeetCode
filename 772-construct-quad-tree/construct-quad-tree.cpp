@@ -1,37 +1,34 @@
 class Solution {
 public:
+    Node* build(vector<vector<int>>& grid, int r, int c, int size) { 
+        bool same = true;
+        int val = grid[r][c];
 
-    bool allsame(vector<vector<int>>& grid, int t, int d, int l, int r) {
-        int val = grid[t][l];
-        for (int i = t; i < d; i++) {
-            for (int j = l; j < r; j++) {
-                if (grid[i][j] != val)
-                    return false;
+        for (int i = r; i < r + size; i++) {
+            for (int j = c; j < c + size; j++) {
+                if (grid[i][j] != val) {
+                    same = false;
+                    break;
+                }
             }
+            if (!same) break;
         }
-        return true;
-    }
+ 
+        if (same) 
+            return new Node(val, true);
+        
+ 
+        int half = size / 2;
 
-    Node* ans(vector<vector<int>>& grid, int t, int d, int l, int r) {
+        Node* topLeft = build(grid, r, c, half);
+        Node* topRight = build(grid, r, c + half, half);
+        Node* bottomLeft = build(grid, r + half, c, half);
+        Node* bottomRight = build(grid, r + half, c + half, half);
 
-        if (allsame(grid, t, d, l, r)) 
-            return new Node(grid[t][l] == 1, true);
-
-        Node* check = new Node();
-        check->isLeaf = false;
-
-        int m1 = t + (d - t) / 2;
-        int m2 = l + (r - l) / 2;
-
-        check->topLeft = ans(grid, t, m1, l, m2);
-        check->topRight = ans(grid, t, m1, m2, r);
-        check->bottomLeft = ans(grid, m1, d, l, m2);
-        check->bottomRight = ans(grid, m1, d, m2, r);
-
-        return check;
+        return new Node(1, false, topLeft, topRight, bottomLeft, bottomRight);
     }
 
     Node* construct(vector<vector<int>>& grid) {
-        return ans(grid, 0, grid.size(), 0, grid[0].size());
+        return build(grid, 0, 0, grid.size());
     }
 };
