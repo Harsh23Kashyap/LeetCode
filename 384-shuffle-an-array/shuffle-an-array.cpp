@@ -1,27 +1,24 @@
 class Solution {
 public:
-vector<int> orig;
-vector<int> backup;
-
+    vector<int> curr;
+    vector<int> dup;
     Solution(vector<int>& nums) {
-        orig=nums;
-        backup=nums;
+        curr=nums;
+        dup=nums;
     }
     
     vector<int> reset() {
-        orig=backup;
-        return orig;
+        dup=curr;
+        return dup;
     }
     
     vector<int> shuffle() {
         
-        for(int i=0;i<orig.size()-1;i++){
-            int rem=orig.size()-i;
-            int k=rand()%rem;
-            swap(orig[i],orig[i+k]);
+        for(int i=1;i<dup.size();i++){
+            int r=(rand()%(i+1));
+            swap(dup[i],dup[r]);
         }
-        return orig;
-
+        return dup;
     }
 };
 
