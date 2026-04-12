@@ -14,62 +14,77 @@ public:
     string serialize(TreeNode* root) {
         if(root==NULL)
         return "null,";
-        string res="";
-
         queue<TreeNode*> q;
         q.push(root);
+        string s="";
         while(!q.empty()){
-            auto it=q.front();
-    q.pop();
+            TreeNode* it=q.front();
+            q.pop();
             
             if(it!=NULL){
-res+= to_string(it->val)+",";
-q.push(it->left);
-q.push(it->right);
+                s+=to_string(it->val)+",";
+                q.push(it->left);
+                q.push(it->right);
+
             }
             else{
-                res+="null,";
+                s+="null,";
             }
+
         }
-        return res;
+        return s;
     }
 
     // Decodes your encoded data to tree.
-    TreeNode* deserialize(string data) {
-        vector<string> check;
-string curr="";
-        for(int i=0;i<data.size();i++){
-            if(data[i]==',')
+    TreeNode* deserialize(string s) {
+        vector<string> ans;
+        string curr="";
+        for(int i=0;i<s.size();i++){
+            if(s[i]==',')
             {
-                check.push_back(curr);
+                ans.push_back(curr);
                 curr="";
             }
-            else{
-                curr+=data[i];
-            }
-        }
-    if(check[0]=="null")
-    return NULL;
+            else
+                curr=curr+s[i];
 
-        queue<TreeNode*> q;
-        TreeNode* root=new TreeNode(stoi(check[0]));
-        q.push(root);
-        int i=1;
-        while(!q.empty()){
-            auto it=q.front();
-            q.pop();
-            if(check[i]!="null"){
-                it->left=new TreeNode(stoi(check[i]));
-                q.push(it->left);
-            }
-            i++;
-           if(check[i]!="null"){
-                it->right=new TreeNode(stoi(check[i]));
-                q.push(it->right);
-            }
-            i++;
         }
-        return root;
+
+
+
+        if(ans[0]=="null")
+            return NULL;
+        
+        TreeNode* t=new TreeNode(stoi(ans[0]));
+        queue<TreeNode*> q;
+        q.push(t);
+        int i=1;
+        while(!q.empty() and i<ans.size()){
+            TreeNode* curr=q.front();
+            q.pop();
+            if(i>=ans.size())
+            continue;
+            if(ans[i]=="null"){
+                curr->left=NULL;
+            }
+            else{
+                curr->left=new TreeNode(stoi(ans[i]));
+                q.push(curr->left);
+            }
+            i++;
+             if(i>=ans.size())
+            continue;
+            if(ans[i]=="null"){
+                curr->right=NULL;
+            }
+            else{
+                curr->right=new TreeNode(stoi(ans[i]));
+                q.push(curr->right);
+            }
+            i++;
+
+        }
+        return t;
     }
 };
 
