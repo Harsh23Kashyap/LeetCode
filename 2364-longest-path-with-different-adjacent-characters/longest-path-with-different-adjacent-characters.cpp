@@ -4,26 +4,31 @@ int best=1;
 unordered_map<int,char> m;
 unordered_map<int, vector<int>> u;
     int longest(int node){
-        priority_queue<int> pq;
+         int first=0,second=0;
+         int c=0;
         for(auto it:u[node]){
             int res=longest(it);
             if(m[it]==m[node])
                 continue;
-            else
-                pq.push(res);
+            else{
+                c++;
+                if(res>=first)
+                {
+                    second=first;
+                    first=res;
+                }
+                else if(res<first and res>=second)
+                    second=res;
+            } 
         }
         int maxi=1;
-        if(pq.empty())
+        if(c==0)
             maxi= 1;
-        else if(pq.size()==1){
-            maxi= 1+pq.top();
+        else if(c==1){
+            maxi= 1+first;
             best=max(best,maxi);
         }
         else{
-             int first=pq.top();
-            pq.pop();
-            int second=pq.top();
-            pq.pop();
              best=max(best, 1+first+second);
             maxi= 1+max(first,second);
         }
