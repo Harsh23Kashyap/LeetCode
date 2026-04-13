@@ -8,16 +8,19 @@ public:
     
     bool book(int st, int et) {
        auto it=s.lower_bound({st,et});
-       if(it!=s.end() and it->first<et)
-       return false;
-
-       if(it!=s.begin()){
-        auto k=prev(it);
-        if(k->second>st)
-        return false;
-
-        
+       if(it!=s.end()){
+        auto curr=*it;
+        if(curr.first<et)
+            return false;
        }
+       if(it!=s.begin()){
+        --it;
+         auto curr=*it;
+        if(curr.second>st)
+            return false;
+        }
+       
+
        s.insert({st,et});
        return true;
 

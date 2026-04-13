@@ -1,82 +1,71 @@
 class Solution {
 public:
-    typedef pair<vector<int>, char> pp;
-
+// typedef pair<pair<int,int>, pair<int,char>> pp;
+typedef tuple<int,int,int,char> pp; 
     vector<int> survivedRobotsHealths(vector<int>& positions, vector<int>& healths, string directions) {
         vector<pp> v;
-        int n = positions.size();
 
-        // Build initial vector
-        for (int i = 0; i < n; i++) {
-            v.push_back({{positions[i], healths[i], i}, directions[i]});
-        }
+        for(int i=0;i<positions.size();i++)
+            v.push_back({positions[i],healths[i],i,directions[i]});
 
-        // Sort by position
-        sort(v.begin(), v.end());  
+
+        sort(v.begin(),v.end());
 
         stack<pp> st;
 
-        for (int i = 0; i < n; i++) {
-            auto nit = v[i];
-            int npos = nit.first[0];
-            int nh = nit.first[1];
-            int nind = nit.first[2];
-            char ndir = nit.second;
- 
-            while (!st.empty()) {
-                auto tit = st.top();
-                int tpos = tit.first[0];
-                int th = tit.first[1];
-                int tind = tit.first[2];
-                char tdir = tit.second;
- 
-                // Only valid collision case
-                if (tdir == 'R' && ndir == 'L') { 
+        st.push(v[0]);
 
-                    if (th == nh) { 
-                        st.pop();
-                        nh = 0;
-                        break;
-                    }
-                    else if (th > nh) { 
-                        st.pop();
-                        st.push({{tpos, th - 1, tind}, tdir});
-                        nh = 0;
-                        break;
-                    }
-                    else { 
-                        st.pop();
-                        nh = nh - 1;
-                        // continue to next stack robot (chain collision)
-                    }
-                } else { 
+        for(int j=1;j<v.size();j++){ 
+            auto [pos,hea,i,dir]=v[j]; 
+            bool toadd=true;
+            while(!st.empty()){
+                auto [npos,nhea,ni,ndir]=st.top(); 
+
+                if(ndir==dir or (ndir=='L' and dir=='R')){
                     break;
                 }
+
+                else{
+                    if(hea<nhea){
+                        toadd=false;
+                        st.pop();
+                        st.push({npos,nhea-1, ni,ndir});
+                        break;
+                    }
+                    else if(hea==nhea){
+                        toadd=false;
+                        st.pop();
+                        break;
+                    }
+                    else{
+                        hea--;
+                        st.pop();
+                    }
+                }
+
+                
             }
-
-            // Push only if alive
-            if (nh > 0) { 
-                st.push({{npos, nh, nind}, ndir});
-            }
- 
+            if(toadd)
+                st.push({pos,hea,i,dir});
         }
-
-        vector<pair<int,int>> res;
-
-        while (!st.empty()) {
-            auto it = st.top();
-            st.pop(); 
-            res.push_back({it.first[2], it.first[1]});
+        vector<int> ans(positions.size(),-1);
+        int n=st.size()-1;
+        while(!st.empty()){
+            auto it=st.top();
+            st.pop();
+            
+            ans[get<2>(it)]=get<1>(it) ;// it.first.second;
         }
+         vector<int> res;
+         for(auto it:ans){
+            if(it!=-1)
+                res.push_back(it);
+         }
 
-        sort(res.begin(), res.end());
+         return res;
 
-        vector<int> cc;
-        for (auto it : res) {
-            cc.push_back(it.second);
-        }
-  
 
-        return cc;
+        
+
     }
 };
