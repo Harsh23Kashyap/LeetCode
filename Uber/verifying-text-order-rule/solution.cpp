@@ -18,27 +18,45 @@
 #include <vector>
 #include <string>
 using namespace std;
-
 bool verifyTextOrderRule(string order, string text) {
-    unordered_map<char,int> u;
-    for(int i=0;i<order.size();i++)
-        u[order[i]]=i;
-    
-    
-    int l=0,r=0;
-    while(r<text.size())
-    {
-        if(u.find(text[r])==u.end()){
-            r++;
-            continue;
-        }
-        if(u[text[r]]<l)
-            return false;
-        l=u[text[r]];
+    unordered_set<char> orderSet(order.begin(), order.end());
+    int l = 0, r = 0;
+    while (r < text.size()) {
+        // Move r forward until a character in order is found
+        while (r < text.size() && orderSet.find(text[r]) == orderSet.end()) r++;
+        if (r == text.size()) break;
+
+        // Compare with the current order character at l
+        while (l < order.size() && (r == text.size() || order[l] != text[r])) l++;
+
+        if (l == order.size()) return false;
+
+        // Found matching order[l] == text[r]
+        l++;
         r++;
     }
     return true;
 }
+// bool verifyTextOrderRule(string order, string text) {
+//     unordered_map<char,int> u;
+//     for(int i=0;i<order.size();i++)
+//         u[order[i]]=i;
+    
+    
+//     int l=0,r=0;
+//     while(r<text.size())
+//     {
+//         if(u.find(text[r])==u.end()){
+//             r++;
+//             continue;
+//         }
+//         if(u[text[r]]<l)
+//             return false;
+//         l=u[text[r]];
+//         r++;
+//     }
+//     return true;
+// }
 
 
 // ------- test harness below, skip while solving -------
