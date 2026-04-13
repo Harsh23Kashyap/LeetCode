@@ -16,9 +16,31 @@
 #include <algorithm>
 using namespace std;
 
+// int lastRemainingAfterHalfElimination(vector<int> nums) {
+//     // The basic approach I can think of is:
+//     // 1. Have a current vector named CURR and put all elements in NUMS.
+//     // 2. Unless the size of the current is greater than one, then basically create pairs and compare i and i+1 together and put the lower element in the new current.
+//     // 3. If there is one single element, push that as well and then make the new current as current and move to the next loop.
+//     // 4. Once the size of the current is 1, return the only element in the current.
+//     vector<int> curr = nums;
+//     while (curr.size() > 1) {
+//         vector<int> next;
+//         next.reserve((curr.size() + 1) / 2);
+//         for (size_t i = 0; i + 1 < curr.size(); i += 2) {
+//             next.push_back(min(curr[i], curr[i + 1]));
+//         }
+//         if (curr.size() % 2 == 1) {
+//             next.push_back(curr.back());
+//         }
+//         curr=next;
+//     }
+//     return curr.front();
+// }
+
+
 int lastRemainingAfterHalfElimination(vector<int> nums) {
-    // TODO: implement this function.
-    return -1;
+ 
+    return *min_element(nums.begin(), nums.end());
 }
 
 // ------- test harness below, skip while solving -------
