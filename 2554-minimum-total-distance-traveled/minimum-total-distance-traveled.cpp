@@ -36,35 +36,41 @@ public:
 
 
     // }
-   long long dp[101][101]; // constraints are small (<=100)
+    long long pass(int i, int j, int rc, vector<int>& robot, vector<vector<int>>& factory, vector<vector<vector<long long>>> &dp){
+        if(i==robot.size())
+            return 0;
+        if(j==factory.size())
+            return 1e15;
+        
 
-    long long pass(int i, int j, vector<int>& robot, vector<vector<int>>& factory) {
-        if (i == robot.size()) return 0;
-        if (j == factory.size()) return 1e15;
+        if(dp[i][j][rc]!=-1)
+            return dp[i][j][rc];
 
-        if (dp[i][j] != -1) return dp[i][j];
-
-        long long res = 1e15;
-        long long cost = 0;
-
-        for (int k = 0; k <= factory[j][1]; k++) {
-            if (i + k > robot.size()) break;
-
-            if (k > 0)
-                cost += abs(robot[i + k - 1] - factory[j][0]);
-
-            res = min(res, cost + pass(i + k, j + 1, robot, factory));
+        
+        //use the current j factory for our work
+        long long take=1e15;
+        if(rc>0)
+        { 
+            take=llabs(robot[i]-factory[j][0])+pass(i+1,j,rc-1,robot,factory,dp); 
+        }
+        //skip this factory
+        long long skip=1e15;
+        if(j+1<factory.size()){
+             skip=pass(i,j+1,factory[j+1][1],robot,factory,dp);
         }
 
-        return dp[i][j] = res;
-    }
+        return dp[i][j][rc]=min(take,skip);
 
+
+
+
+    }
     long long minimumTotalDistance(vector<int>& robot, vector<vector<int>>& factory) {
         sort(robot.begin(), robot.end());
         sort(factory.begin(), factory.end());
 
-        memset(dp, -1, sizeof(dp));
+        vector<vector<vector<long long>>> dp(robot.size(), vector<vector<long long>> (factory.size(),vector<long long> (robot.size()+1,-1)));
 
-        return pass(0, 0, robot, factory);
+        return pass(0, 0, factory[0][1], robot, factory, dp);
     }
 };
