@@ -1,105 +1,97 @@
+class DSU {
+public:
+    vector<int> parent, size;
+
+    DSU(int n) {
+        parent.resize(n);
+        size.resize(n, 1);
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    void unite(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a == b) return;
+
+        if (size[a] < size[b]) 
+            swap(a, b);
+
+        parent[b] = a;
+        size[a] += size[b];
+    }
+};
+
 class Solution {
 public:
-    vector<int> parent;
-    vector<int> rank;
-
-    int find(int x){
-        if(x==parent[x])
-            return x;
-        return parent[x]=find(parent[x]);
-    }
-
-    void unite(int a, int b){
-        int pa=find(a);
-        int pb=find(b);
- 
-        if(pa==pb){ 
-            return;
-        }
-        else{
-            if(rank[pa]<=rank[pb]){ 
-                rank[pb]+=rank[pa];
-                parent[pa]=pb;
-            }
-            else{ 
-                rank[pa]+=rank[pb];
-                parent[pb]=pa;
-            }
-        }
-    }
-
-    vector<int> dx={-1,0,1,0,-1};
-
-    void pass(int i, int j, int m, int n, vector<vector<int>>& grid, unordered_set<int> &vis)
-    { 
-
-        for(int k=0;k<4;k++){
-            int nx=i+dx[k],ny=j+dx[k+1];
-
-            if(nx>=0 and ny>=0 and nx<m and ny<n and grid[nx][ny]==1 and vis.find(nx*n+ny)==vis.end()){
-                 
-
-                vis.insert(nx*n+ny);
-                unite(i*n+j,nx*n+ny);
-                pass(nx,ny,m,n,grid,vis);
-            }
-        }
-    }
-
     int largestIsland(vector<vector<int>>& grid) {
-        
-        int m=grid.size(),n=grid[0].size();
+        int n = grid.size();
+        DSU dsu(n * n);
 
-        parent.resize(m*n);
-        rank.resize(m*n);
- 
-        for(int i=0;i<m*n;i++){
-            rank[i]=0;
-            parent[i]=i;
-            int r=i/n,c=i%n;
-            if(grid[r][c]==1)
-                rank[i]=1;
-        }
+        vector<int> dx = {0, 0, 1, -1};
+        vector<int> dy = {1, -1, 0, 0};
 
-        unordered_set<int> vis;
- 
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                if(grid[i][j]==1 and vis.find(i*n+j)==vis.end()){ 
-                    vis.insert(i*n+j);
-                    pass(i,j,m,n,grid,vis);
+        // Step 1: connect all 1s
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    for (int d = 0; d < 4; d++) {
+                        int ni = i + dx[d];
+                        int nj = j + dy[d];
+
+                        if (ni >= 0 && nj >= 0 && ni < n && nj < n 
+                            && grid[ni][nj] == 1) {
+                            int u = i * n + j;
+                            int v = ni * n + nj;
+                            dsu.unite(u, v);
+                        }
+                    }
                 }
             }
-        } 
-        int maxi=0;
-        bool possible=false; 
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                if(grid[i][j]==0){
- 
+        }
 
-                    unordered_set<int> pl;
+        int ans = 0;
+        bool hasZero = false;
 
-                    for(int k=0;k<4;k++){
-                        int nx=i+dx[k],ny=j+dx[k+1];
-                        possible=true;
-                        if(nx>=0 and ny>=0 and nx<m and ny<n and grid[nx][ny]==1){
-                            int p = find(nx*n+ny); 
-                            pl.insert(p);
+        // Step 2: try flipping each 0
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+
+                if (grid[i][j] == 0) {
+                    hasZero = true;
+
+                    unordered_set<int> parents;
+                    
+                    for (int d = 0; d < 4; d++) {
+                        int ni = i + dx[d];
+                        int nj = j + dy[d];
+
+                        if (ni >= 0 && nj >= 0 && ni < n && nj < n 
+                            && grid[ni][nj] == 1) {
+                            int p = dsu.find(ni * n + nj);
+                            parents.insert(p);
                         }
                     }
 
-                    int curr=0;
- 
-                    for(auto it:pl)
-                        curr+=rank[it];
-                    
-                    maxi=max(maxi,curr+1);
+                    int total = 1; // flip current 0
+
+                    for (auto p : parents) {
+                        total += dsu.size[p];
+                    }
+
+                    ans = max(ans, total);
                 }
             }
         }
- 
 
-        return possible?maxi:m*n;
+        // Step 3: edge case (all 1s)
+        if (!hasZero) return n * n;
+
+        return ans;
     }
 };
