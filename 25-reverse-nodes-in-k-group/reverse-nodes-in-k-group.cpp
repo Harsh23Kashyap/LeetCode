@@ -1,42 +1,34 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
 public:
-ListNode* reverse(ListNode* head, int k){
-        ListNode* curr=head;
-        ListNode* nhead=curr;
-        int c=0;
-        while(nhead!=NULL and c<k){
-            nhead=nhead->next;
-            c++;
-        }
-        if(c<k)
-            return curr;
-
+    
+    // reverse k nodes and return new head
+    ListNode* reverseK(ListNode* head, int k) {
+        ListNode* prev = NULL;
+        ListNode* curr = head;
         
-        ListNode* prev=NULL; 
-        while(curr!=nhead){
-            ListNode* nex=curr->next;
-            curr->next=prev;
-            prev=curr;
-            curr=nex;
+        while (k--) {
+            ListNode* temp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = temp;
         }
-        head->next=reverse(nhead,k);
-        return prev;
-
-}
+        
+        return prev; // new head after reverse
+    }
+    
     ListNode* reverseKGroup(ListNode* head, int k) {
-        ListNode* del=new ListNode(-1);
-        del->next=head;
-        return reverse(head,k);
+        ListNode* temp = head; 
+        for (int i = 0; i < k; i++) {
+            if (!temp) return head;
+            temp = temp->next;
+        }
         
-    }   
+        // Step 2: reverse first k nodes
+        ListNode* newHead = reverseK(head, k);
+        
+        // Step 3: recursion for remaining
+        head->next = reverseKGroup(temp, k);
+        
+        return newHead;
+    }
 };
