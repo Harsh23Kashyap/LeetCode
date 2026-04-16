@@ -36,7 +36,7 @@ int m=1e9+7;
 
         for(int i=n-1;i>=0;i--){
 
-            while(!st.empty() and nums[st.top()]>nums[i]){
+            while(!st.empty() and nums[st.top()]>=nums[i]){
                 st.pop();
             }
 
