@@ -1,4 +1,4 @@
-<h2><a href="https://leetcode.com/problems/range-sum-query-mutable/">307. Range Sum Query - Mutable</a></h2><h3>Medium</h3><hr><div><p>Given an integer array <code>nums</code>, handle multiple queries of the following types:</p>
+<h2><a href="https://leetcode.com/problems/range-sum-query-mutable">Range Sum Query - Mutable</a></h2> <img src='https://img.shields.io/badge/Difficulty-Medium-orange' alt='Difficulty: Medium' /><hr><p>Given an integer array <code>nums</code>, handle multiple queries of the following types:</p>
 
 <ol>
 	<li><strong>Update</strong> the value of an element in <code>nums</code>.</li>
@@ -14,10 +14,11 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<pre><strong>Input</strong>
-["NumArray", "sumRange", "update", "sumRange"]
+<pre>
+<strong>Input</strong>
+[&quot;NumArray&quot;, &quot;sumRange&quot;, &quot;update&quot;, &quot;sumRange&quot;]
 [[[1, 3, 5]], [0, 2], [1, 2], [0, 2]]
 <strong>Output</strong>
 [null, 9, null, 8]
@@ -40,4 +41,3 @@ numArray.sumRange(0, 2); // return 1 + 2 + 5 = 8
 	<li><code>0 &lt;= left &lt;= right &lt; nums.length</code></li>
 	<li>At most <code>3 * 10<sup>4</sup></code> calls will be made to <code>update</code> and <code>sumRange</code>.</li>
 </ul>
-</div>
