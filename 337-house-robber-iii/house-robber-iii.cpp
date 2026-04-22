@@ -10,21 +10,22 @@
  * };
  */
 class Solution {
-public:
-pair<int,int> ans(TreeNode* root){
-    if(root==NULL)
-    return {0,0};
-    auto a=ans(root->left);
-    auto b=ans(root->right);
-    // if(parentchor){
-    // int c= a+b;
-    // }
-    // int mainchor=root->val+ans(root->left,true)+ans(root->right,true);
-    return {root->val+a.second+b.second,max(a.first,a.second)+max(b.second,b.first)};
-}
+public: 
+    pair<int,int> solve(TreeNode* root) {
+        if (!root) 
+            return {0, 0};
+
+        auto left = solve(root->left);
+        auto right = solve(root->right);
+
+        int rob = root->val + left.second + right.second;
+        int not_rob = max(left.first, left.second) + max(right.first, right.second);
+
+        return {rob, not_rob};
+    }
+
     int rob(TreeNode* root) {
-       auto it= ans(root);
-        return max(it.first,it.second);
-       //Ill search
+        auto res = solve(root);
+        return max(res.first, res.second);
     }
 };
