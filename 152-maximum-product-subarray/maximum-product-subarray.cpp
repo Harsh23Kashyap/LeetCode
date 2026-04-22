@@ -1,23 +1,22 @@
 class Solution {
 public:
-    int maxProduct(vector<int>& nums) {
-        
+    int maxProduct(vector<int>& nums) 
+    {
+        int maxProd = 1;
+        int minProd = 1;
+        int ans = INT_MIN;
 
-        int a=nums[0],b=nums[0],ans=nums[0];
+        for (int i = 0; i < nums.size(); i++) {
+            int num = nums[i];
+            int tempMax = maxProd;
 
-        for(int i=1;i<nums.size();i++){
-            if(a==0 and b==0)
-            {
-                a=1,b=1;
-            }
-             int t=max(nums[i]*a,max(nums[i],b*nums[i]));
-             b=min(nums[i]*b,min(nums[i],nums[i]*a));
-
-           a=t;
-
-
-            ans=max(ans,a);
+            int ca = max({num, num * maxProd, num * minProd});
+            int cb = min({num, num * tempMax, num * minProd});
+            maxProd=ca,minProd=cb;
+            
+            ans = max(ans, maxProd);
         }
+
         return ans;
     }
 };
