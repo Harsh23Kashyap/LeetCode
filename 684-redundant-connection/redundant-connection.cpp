@@ -41,8 +41,9 @@ public:
        int n=edges.size();
        DSU dsu(n+1);
        vector<int> last;
-       for(auto it:edges){
-        if(!dsu.unite(it[0],it[1]))
+       for(auto it:edges)
+       {
+        if(dsu.unite(it[0],it[1])==false)
             last= it;
        }
        return last;
