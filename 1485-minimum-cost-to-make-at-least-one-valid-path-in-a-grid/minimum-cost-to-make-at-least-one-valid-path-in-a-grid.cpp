@@ -38,9 +38,9 @@ public:
 
                     dist[nx][ny] = dist[x][y] + cost;
 
-                    if(cost == 0)
-                        dq.push_front({nx,ny});
-                    else
+                    // if(cost == 0)
+                    //     dq.push_front({nx,ny});
+                    // else
                         dq.push_back({nx,ny});
                 }
             }
