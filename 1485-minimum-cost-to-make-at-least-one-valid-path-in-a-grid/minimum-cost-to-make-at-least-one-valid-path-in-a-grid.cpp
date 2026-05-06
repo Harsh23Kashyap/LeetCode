@@ -1,39 +1,51 @@
 class Solution {
 public:
-vector<int> dx={0,0,1,-1};
-vector<int> dy={1,-1,0,0};
-typedef pair<int, pair<int,int>> pp;
     int minCost(vector<vector<int>>& grid) {
-        
 
-        priority_queue<pp, vector<pp>, greater<pp>> pq;
-        vector<vector<int>> dp(grid.size(), vector<int> (grid[0].size(),INT_MAX));
-        pq.push({0,{0,0}});
-        dp[0][0]=0;
+        int m = grid.size();
+        int n = grid[0].size();
 
-        while(!pq.empty()){
-            auto [cost,dim]=pq.top();
-            auto [x,y]=dim;
-            // cout<<x<<" "<<y<<endl;
-            pq.pop();
-            if(dp[x][y]<cost)
-                continue;
-            
-            for(int k=1;k<=4;k++){
-                int currcost=(grid[x][y]==k)?0:1;
-                int nx=dx[k-1]+x;
-                int ny=dy[k-1]+y;
-                if(not(nx>=0 and ny>=0 and nx<grid.size() and ny<grid[0].size()))
+        vector<vector<int>> dist(m, vector<int>(n, 1e9));
+
+        deque<pair<int,int>> dq;
+
+        dq.push_front({0,0});
+        dist[0][0] = 0;
+
+        vector<vector<int>> dir = {
+            {0,1},
+            {0,-1},
+            {1,0},
+            {-1,0}
+        };
+
+        while(!dq.empty()) {
+
+            auto [x,y] = dq.front();
+            dq.pop_front();
+
+            for(int k=0;k<4;k++) {
+
+                int nx = x + dir[k][0];
+                int ny = y + dir[k][1];
+
+                if(nx<0 || ny<0 || nx>=m || ny>=n)
                     continue;
-                if(dp[nx][ny]>cost+currcost){
-                    dp[nx][ny]=cost+currcost;
-                    pq.push({cost+currcost,{nx,ny}});
+
+                int cost = (grid[x][y] == k+1) ? 0 : 1;
+
+                if(dist[x][y] + cost < dist[nx][ny]) {
+
+                    dist[nx][ny] = dist[x][y] + cost;
+
+                    if(cost == 0)
+                        dq.push_front({nx,ny});
+                    else
+                        dq.push_back({nx,ny});
                 }
             }
-
-            
         }
-        return dp[grid.size()-1][grid[0].size()-1];
 
+        return dist[m-1][n-1];
     }
 };
