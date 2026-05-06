@@ -1,85 +1,75 @@
 class Solution {
 public:
-    unordered_set<string> dict;
-
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
-
-        for (auto &w : wordList) 
-            dict.insert(w);
-
-        vector<vector<string>> res;
-        unordered_map<string, vector<string>> parent;
-
+        vector<vector<string>> ans;
+        unordered_set<string> u(wordList.begin(),wordList.end());
+        unordered_map<string, vector<string>> par;
+        if(u.find(endWord)==u.end())
+            return ans;
         queue<string> q;
         q.push(beginWord);
 
         unordered_set<string> visited;
-        bool found = false;
-
-        while (!q.empty() && !found) {
-            int sz = q.size();
-            unordered_set<string> levelVisited;
-
-            while (sz--) 
-            {
-                string word = q.front(); 
+        visited.insert(beginWord);
+        bool found=false;
+        while(!q.empty()){
+            unordered_set<string> lev;
+            int sz=q.size();
+            while(sz--){
+                auto it=q.front();
                 q.pop();
 
-                string original = word;
+                if(it==endWord){
+                    found=true;
+                    continue;
+                }
 
-                for (int i = 0; i < word.size(); i++) 
+                string temp=it;
+
+                for(int i=0;i<temp.size();i++)
                 {
-                    char old = word[i];
+                    string curr=temp;
+                    for(char ch='a';ch<='z';ch++){
+                        curr[i]=ch;
 
-                    for (char ch = 'a'; ch <= 'z'; ch++) {
-                        word[i] = ch;
-
-                        if (dict.count(word) && !visited.count(word)) {
-                            if (word == endWord) 
-                                found = true;
-
-                            if (!levelVisited.count(word))
-                             {
-                                q.push(word);
-                                levelVisited.insert(word);
+                        if(u.find(curr)!=u.end() and visited.find(curr)==visited.end()){
+                            if(lev.find(curr)==lev.end())
+                            {
+                                q.push(curr);
+                                lev.insert(curr);
                             }
-
-                            parent[word].push_back(original);
+                            par[curr].push_back(it);
                         }
                     }
-                    word[i] = old;
+
                 }
             }
-
-            for (auto &w : levelVisited)
-                visited.insert(w);
+            for(auto k:lev)
+                visited.insert(k);
+            if(found)
+                break;
         }
 
-        if (!found) 
-            return res;
+        if(!found)
+            return ans;
 
-        vector<string> path = {endWord};
-        dfs(endWord, beginWord, parent, path, res);
-
-        return res;
+        vector<string> check;
+        check.push_back(endWord);
+        dfs(ans,check,endWord,beginWord,par);
+        return ans;
     }
+    void dfs(vector<vector<string>> &ans, vector<string> curr, string e, string b,  unordered_map<string, vector<string>> &par){
 
-    void dfs(string word, string beginWord,
-             unordered_map<string, vector<string>>& parent,
-             vector<string>& path,
-             vector<vector<string>>& res) {
-
-        if (word == beginWord) {
-            reverse(path.begin(), path.end());
-            res.push_back(path);
-            reverse(path.begin(), path.end());
+        if(e==b){
+            reverse(curr.begin(),curr.end());
+            ans.push_back(curr);
             return;
         }
 
-        for (auto &p : parent[word]) {
-            path.push_back(p);
-            dfs(p, beginWord, parent, path, res);
-            path.pop_back();
+        for(auto it:par[e]){
+            curr.push_back(it);
+            dfs(ans,curr,it,b,par);
+            curr.pop_back();
         }
     }
 };
