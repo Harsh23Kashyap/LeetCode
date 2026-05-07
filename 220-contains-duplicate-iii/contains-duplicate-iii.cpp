@@ -1,38 +1,39 @@
 class Solution {
 public:
-    bool containsNearbyAlmostDuplicate(vector<int>& nums, int indexDiff, int valueDiff) {
-        multiset<int> m;
 
-        for(int i=0;i<nums.size();i++){
-            int it=nums[i];
-            // look for element such that 
-            // bigegrelemnt +valeudiff
-            int x=it+valueDiff;
+    bool containsNearbyAlmostDuplicate(vector<int>& nums,
+                                       int indexDiff,
+                                       int valueDiff) {
 
-            auto nex=m.upper_bound(x);
-            if(nex!=m.begin()){
+        multiset<long long> ms;
 
-                --nex;
-                int val=*nex;
-                if(abs(val-it)<=valueDiff)
+        for(int i = 0; i < nums.size(); i++) {
+
+            long long curr = nums[i];
+
+            long long left =
+                curr - valueDiff;
+
+            long long right =
+                curr + valueDiff;
+ 
+            auto l = ms.lower_bound(left);
+ 
+            auto r = ms.upper_bound(right);
+ 
+            if(l != r)
                 return true;
+
+            ms.insert(curr);
+
+            if(i >= indexDiff) {
+
+                ms.erase(
+                    ms.find(nums[i - indexDiff])
+                );
             }
-
-
-            x=it-valueDiff;
-            nex=m.lower_bound(x);
-            if(nex!=m.end()){
-                int val=*nex;
-                if(abs(val-it)<=valueDiff)
-                return true;
-            }
-
-
-            if(i>=indexDiff){
-                m.erase(m.find(nums[i-indexDiff]));
-            }
-            m.insert(it);
         }
+
         return false;
     }
 };
