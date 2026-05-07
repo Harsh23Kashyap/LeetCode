@@ -1,91 +1,115 @@
 class LRUCache {
 public:
-    class Node{ 
-        public:
+
+    struct Node {
+
         int key;
         int val;
-        Node* prev;
+
         Node* next;
-        Node(int k,int v)
-        {
-            key=k,
-            val=v;
-            next=NULL;
-            prev=NULL;
-        }    
-};
-int sz=0;
-int c=0;
-Node* head=new Node(-1,-1);
-Node* tail=new Node(-1,-1);
+        Node* prev;
 
-unordered_map<int, Node*> u;
+        Node(int k, int v) {
+            key = k;
+            val = v;
+            next = NULL;
+            prev = NULL;
+        }
+    };
+
+    int cap;
+
+    unordered_map<int, Node*> mp;
+
+    Node* head;
+    Node* tail;
+
     LRUCache(int capacity) {
-        head->next=tail;
-        tail->prev=head;
-        c=capacity;
-    }
-    void deleteNode(Node* a){
-         Node* pprev=a->prev;
-         Node* pnext=a->next;
-         pnext->prev=pprev;
-         pprev->next=pnext;
 
-         u.erase(a->key);
-         delete(a);
+        cap = capacity;
+
+        head = new Node(-1, -1);
+        tail = new Node(-1, -1);
+
+        head->next = tail;
+        tail->prev = head;
     }
-    void insert(int key, Node* curr){
-        Node* chead=head;
-         Node* pnext=chead->next;
-         curr->prev=head;
-         curr->next=pnext;
-         pnext->prev=curr;
-         head->next=curr;
+
+    // delete node from DLL
+    void deleteNode(Node* node) {
+
+        Node* prevNode = node->prev;
+        Node* nextNode = node->next;
+
+        prevNode->next = nextNode;
+        nextNode->prev = prevNode;
     }
+
+    // add node right after head
+    void addNode(Node* node) {
+
+        Node* temp = head->next;
+
+        head->next = node;
+        node->prev = head;
+
+        node->next = temp;
+        temp->prev = node;
+    }
+
     int get(int key) {
 
-        if(u.find(key)==u.end())
+        // key not present
+        if(mp.find(key) == mp.end())
             return -1;
-        
-        Node* curr=u[key];
 
-        int val=curr->val;
+        Node* node = mp[key];
 
-        deleteNode(curr);
+        // move to front (MRU)
+        deleteNode(node);
+        addNode(node);
 
-        curr=new Node(key,val);
-        u[key]=curr;
-
-        insert(key,curr);
-        return val;
-        
+        return node->val;
     }
-    
+
     void put(int key, int value) {
-        if(u.find(key)!=u.end())
-        {
-            deleteNode(u[key]);
-            sz--;
-        }
-        Node* curr=new Node(key,value);
-        u[key]=curr;
 
-        insert(key,curr);
-        
-        sz++;
-        if(sz>c){
-            sz--;
-            Node* last=tail->prev;
-            deleteNode(last);
+        // key already exists
+        if(mp.find(key) != mp.end()) {
+
+            Node* existingNode = mp[key];
+
+            // remove old node
+            deleteNode(existingNode);
+
+            // update value
+            existingNode->val = value;
+
+            // move to front
+            addNode(existingNode);
+
+            return;
         }
 
-        
+        // create new node
+        Node* newNode = new Node(key, value);
+
+        // add to map
+        mp[key] = newNode;
+
+        // add to front
+        addNode(newNode);
+
+        // capacity exceeded
+        if(mp.size() > cap) {
+
+            Node* lru = tail->prev;
+
+            // remove from map
+            mp.erase(lru->key);
+
+            // remove from DLL
+            deleteNode(lru);
+        }
     }
 };
-
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache* obj = new LRUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
