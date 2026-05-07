@@ -1,63 +1,90 @@
-class DSU {
+class Solution {
 public:
+
     unordered_map<string, string> parent;
 
     string find(string x) {
-        if (parent[x] == x) return x;
+
+        if(parent[x] == x)
+            return x;
+
         return parent[x] = find(parent[x]);
     }
 
-    void unite(string a, string b) {
-        string pa = find(a);
-        string pb = find(b);
-        if (pa != pb) {
-            parent[pb] = pa;
+    void unite(string x, string y) {
+
+        string px = find(x);
+        string py = find(y);
+
+        if(px != py) {
+            parent[py] = px;
         }
     }
-};
 
-class Solution {
-public:
     vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
-        DSU dsu;
+
         unordered_map<string, string> emailToName;
 
-        // Step 1: Initialize DSU + map email -> name
-        for (auto& acc : accounts) 
+        // initialize DSU
+        for(auto &acc : accounts) 
         {
+
             string name = acc[0];
-            for (int i = 1; i < acc.size(); i++) 
-            {
+
+            for(int i = 1; i < acc.size(); i++) {
+
                 string email = acc[i];
-                if (!dsu.parent.count(email)) {
-                    dsu.parent[email] = email;
-                }
+
                 emailToName[email] = name;
+
+                if(parent.find(email) == parent.end()) {
+                    parent[email] = email;
+                }
             }
-        }
- 
-        for (auto& acc : accounts) {
-            string firstEmail = acc[1];
-            for (int i = 2; i < acc.size(); i++) {
-                dsu.unite(firstEmail, acc[i]);
-            }
-        }
- 
-        unordered_map<string, vector<string>> groups;
-        for (auto& [email, name] : emailToName) {
-            string parent = dsu.find(email);
-            groups[parent].push_back(email);
-        }
- 
-        vector<vector<string>> res;
-        for (auto& [parent, emails] : groups) {
-            sort(emails.begin(), emails.end());
-            vector<string> temp;
-            temp.push_back(emailToName[parent]); // name
-            for (auto& e : emails) temp.push_back(e);
-            res.push_back(temp);
         }
 
-        return res;
+        // union emails in same account
+        for(auto &acc : accounts) {
+
+            string firstEmail = acc[1];
+
+            for(int i = 2; i < acc.size(); i++) 
+            {
+
+                unite(firstEmail, acc[i]);
+            }
+        }
+
+        // group emails by root parent
+        unordered_map<string, vector<string>> groups;
+
+        for(auto &[email, _] : emailToName) {
+
+            string root = find(email);
+
+            groups[root].push_back(email);
+        }
+
+        vector<vector<string>> ans;
+
+        // build answer
+        for(auto &[root, emails] : groups) {
+
+            sort(emails.begin(), emails.end());
+
+            vector<string> temp;
+
+            // add name
+            temp.push_back(emailToName[root]);
+
+            // add emails
+            for(auto &email : emails) {
+                temp.push_back(email);
+            }
+
+            ans.push_back(temp);
+        }
+
+        return ans;
     }
 };
