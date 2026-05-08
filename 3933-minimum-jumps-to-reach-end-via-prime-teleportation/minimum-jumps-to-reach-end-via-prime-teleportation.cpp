@@ -16,39 +16,38 @@ public:
     }
 
     int minJumps(vector<int>& nums) {
+ 
+        unordered_map<int, bool> prime;
+            unordered_map<int, vector<int>> u;
 
-        int n = nums.size();
+            for(int i = 0; i < nums.size(); i++){
 
-        unordered_map<int, vector<int>> mp;
+                int x = nums[i];
 
-        // preprocess
-        for(int i = 0; i < n; i++){
+                for(int d = 2; d * d <= x; d++){
 
-            for(int d = 2; d * d <= nums[i]; d++){
+                    if(x % d == 0){
 
-                if(nums[i] % d == 0){
+                        if(isPrime(d))
+                            u[d].push_back(i);
 
-                    if(isPrime(d))
-                        mp[d].push_back(i);
-
-                    int other = nums[i] / d;
-
-                    if(other != d && isPrime(other))
-                        mp[other].push_back(i);
+                        while(x % d == 0)
+                            x /= d;
+                    }
                 }
+
+                if(x > 1)
+                    u[x].push_back(i);
             }
 
-            if(isPrime(nums[i]))
-                mp[nums[i]].push_back(i);
-        }
-
         queue<int> q;
-        vector<int> vis(n, 0);
+        unordered_set<int> vis;
+        unordered_set<int> usedPrime;
 
         q.push(0);
-        vis[0] = 1;
+        vis.insert(0);
 
-        int steps = 0;
+        int curr = 0;
 
         while(!q.empty()){
 
@@ -59,43 +58,43 @@ public:
                 int it = q.front();
                 q.pop();
 
-                if(it == n - 1)
-                    return steps;
+                if(it == nums.size() - 1)
+                    return curr;
 
                 // right
-                if(it + 1 < n && !vis[it + 1]){
+                if(it + 1 < nums.size() &&
+                   vis.find(it + 1) == vis.end()){
 
-                    vis[it + 1] = 1;
                     q.push(it + 1);
+                    vis.insert(it + 1);
                 }
 
                 // left
-                if(it - 1 >= 0 && !vis[it - 1]){
+                if(it - 1 >= 0 &&
+                   vis.find(it - 1) == vis.end()){
 
-                    vis[it - 1] = 1;
                     q.push(it - 1);
+                    vis.insert(it - 1);
                 }
 
-                // prime teleport
-                if(isPrime(nums[it])){
+                // prime jumps
+                if(isPrime(nums[it]) &&
+                   usedPrime.find(nums[it]) == usedPrime.end()){
 
-                    int p = nums[it];
+                    for(auto k : u[nums[it]]){
 
-                    for(int nxt : mp[p]){
+                        if(vis.find(k) == vis.end()){
 
-                        if(!vis[nxt]){
-
-                            vis[nxt] = 1;
-                            q.push(nxt);
+                            vis.insert(k);
+                            q.push(k);
                         }
                     }
 
-                    // IMPORTANT
-                    mp[p].clear();
+                    usedPrime.insert(nums[it]);
                 }
             }
 
-            steps++;
+            curr++;
         }
 
         return -1;
