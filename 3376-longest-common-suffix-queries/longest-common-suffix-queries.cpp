@@ -1,47 +1,35 @@
 class Solution {
 public:
-    struct Node {
-        int child[26];
+    struct Trie {
         int bestIdx;
+        int child[26];
 
-        Node() {
-            memset(child, -1, sizeof(child));
+        Trie() {
             bestIdx = -1;
+            memset(child, -1, sizeof(child));
         }
     };
 
-    vector<Node> trie;
+    vector<Trie> trie;
+    vector<int> len;
 
-    Solution() {
-        trie.emplace_back(); // root
-    }
-
-    void updateBest(int node, int idx,
-                    vector<string>& wordsContainer) {
-
-        if (trie[node].bestIdx == -1) {
-            trie[node].bestIdx = idx;
-            return;
-        }
-
-        int currLen = wordsContainer[idx].size();
-        int bestLen = wordsContainer[trie[node].bestIdx].size();
-
-        if (currLen < bestLen ||
-            (currLen == bestLen && idx < trie[node].bestIdx)) {
+    void updateNode(int node, int idx) {
+        if (trie[node].bestIdx == -1 ||
+            len[idx] < len[trie[node].bestIdx] ||
+            (len[idx] == len[trie[node].bestIdx] &&
+             idx < trie[node].bestIdx))
+        {
             trie[node].bestIdx = idx;
         }
     }
 
-    void insert(string& word, int idx,
-                vector<string>& wordsContainer) {
-
+    void insert(const string& s, int idx) {
         int node = 0;
 
-        updateBest(node, idx, wordsContainer);
+        updateNode(node, idx);
 
-        for (int i = word.size() - 1; i >= 0; --i) {
-            int c = word[i] - 'a';
+        for (int i = (int)s.size() - 1; i >= 0; --i) {
+            int c = s[i] - 'a';
 
             if (trie[node].child[c] == -1) {
                 trie[node].child[c] = trie.size();
@@ -49,18 +37,19 @@ public:
             }
 
             node = trie[node].child[c];
-            updateBest(node, idx, wordsContainer);
+            updateNode(node, idx);
         }
     }
 
-    int search(string& word) {
+    int search(const string& s) {
         int node = 0;
 
-        for (int i = word.size() - 1; i >= 0; --i) {
-            int c = word[i] - 'a';
+        for (int i = (int)s.size() - 1; i >= 0; --i) {
+            int c = s[i] - 'a';
 
-            if (trie[node].child[c] == -1)
-                break;
+            if (trie[node].child[c] == -1) {
+                return trie[node].bestIdx;
+            }
 
             node = trie[node].child[c];
         }
@@ -71,20 +60,25 @@ public:
     vector<int> stringIndices(vector<string>& wordsContainer,
                               vector<string>& wordsQuery) {
 
-        int totalChars = 1;
-        for (auto& s : wordsContainer)
-            totalChars += s.size();
+        len.resize(wordsContainer.size());
 
-        trie.reserve(totalChars);
+        long long totalChars = 1;
+        for (int i = 0; i < wordsContainer.size(); i++) {
+            len[i] = wordsContainer[i].size();
+            totalChars += wordsContainer[i].size();
+        }
+
+        trie.reserve(totalChars + 1);
+        trie.emplace_back(); // root
 
         for (int i = 0; i < wordsContainer.size(); i++) {
-            insert(wordsContainer[i], i, wordsContainer);
+            insert(wordsContainer[i], i);
         }
 
         vector<int> ans;
         ans.reserve(wordsQuery.size());
 
-        for (auto& q : wordsQuery) {
+        for (const string& q : wordsQuery) {
             ans.push_back(search(q));
         }
 
