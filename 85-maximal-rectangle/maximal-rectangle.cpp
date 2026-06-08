@@ -1,38 +1,30 @@
 class Solution {
 public:
-    int maxrectange(vector<int> rect){
-        stack<int> st;
-        rect.push_back(0);
-        int maxre=0;
-        for(int i=0;i<rect.size();i++){
-            while(!st.empty() and rect[st.top()]>=rect[i]){
-                int ind=st.top();
-                st.pop();
-                int len=st.empty()?i:i-st.top()-1;
-                int cr=len*rect[ind];
-                maxre=max(maxre,cr);
-            }
-            st.push(i);
-        }
-        return maxre;
-
-    }
     int maximalRectangle(vector<vector<char>>& matrix) {
-        if(matrix.empty()) return 0;
-        int ans=0;
-        vector<int> ts(matrix[0].size(),0);
-        for(int i=0;i<matrix.size();i++){
-            for(int j=0;j<matrix[i].size();j++){
-                if(matrix[i][j]=='1'){
-                    ts[j]+=1;
-                }
-                else{
-                    ts[j]=0;
-                }
+                if (matrix.empty()) return 0;
+        int m = matrix.size();
+        int n = matrix[0].size();
+        vector<int> heights(n, 0);
+        int maxArea = 0;
+        
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == '1') heights[j]++;
+                else heights[j] = 0;
             }
-            ans=max(ans,maxrectange(ts));
-
+            
+            stack<int> s;
+            for (int j = 0; j <= n; j++) {
+                int h = (j == n) ? 0 : heights[j];
+                while (!s.empty() && h < heights[s.top()]) {
+                    int height = heights[s.top()];
+                    s.pop();
+                    int width = s.empty() ? j : j - s.top() - 1;
+                    maxArea = max(maxArea, height * width);
+                }
+                s.push(j);
+            }
         }
-        return ans;
+        return maxArea;
     }
 };
