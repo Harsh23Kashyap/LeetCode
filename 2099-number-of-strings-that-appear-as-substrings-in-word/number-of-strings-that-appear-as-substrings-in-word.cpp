@@ -1,13 +1,20 @@
 class Solution {
 public:
-    int numOfStrings(vector<string>& p, string s) {
-        int a = p.size();
-        int b=0;
-        for(int i =0;i<a;i++){
-            if(s.find(p[i])!=string::npos){
-                b++;
+bool there(string a, string b){
+
+    auto it=b.find(a);
+    if(it==string::npos)
+        return false;
+    return true;
+}
+    int numOfStrings(vector<string>& patterns, string word) {
+        int c=0;
+
+        for(int i=0;i<patterns.size();i++){
+            if(there(patterns[i],word)){
+                c++;
             }
-        }  
-        return b;
+        }
+        return c;
     }
 };
