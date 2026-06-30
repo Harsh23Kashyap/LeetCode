@@ -1,23 +1,18 @@
 class Solution {
 public:
-    int numberOfSubstrings(string st) {
-        unordered_map<char,int> u;
-        int s=0,e=0;
-        int tot=0;
-        while(e<st.size()){
-            char ch=st[e];
-            u[ch]++;
+    int numberOfSubstrings(string s) {
+        int l=0,r=0,c=0;
+        vector<int> freq(3,0);
 
-            while(u.size()==3){
-                tot+=st.size()-e;
-                u[st[s]]-=1;
-                if(u[st[s]]<1){
-                    u.erase(st[s]);
-                }
-                s++;
+        while(r<s.size()){
+            freq[s[r]-'a']++;
+            while(l<r and freq[0]>0 and freq[1]>0 and freq[2]>0){
+                c+=s.size()-r;
+                freq[s[l] - 'a']--;
+                l++;
             }
-            e++;
+            r++;
         }
-        return tot;
+        return c;
     }
 };
